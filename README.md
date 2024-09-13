@@ -1,6 +1,3 @@
-[![Status](https://github.com/giis-uniovi/samples-giis-template/actions/workflows/test.yml/badge.svg)](https://github.com/giis-uniovi/samples-giis-template/actions)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=my%3Asamples-giis-template&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=my%3Asamples-giis-template)
-
 # Replication package for *'Exploratory study of the usefulness of LLMs in System testing'*
 
 This repository contains the replication package of the paper *Software System Testing assisted by Large Language
