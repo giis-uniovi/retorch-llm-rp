@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13761150.svg)](https://doi.org/10.5281/zenodo.13761150)
 # Replication package for *'Exploratory study of the usefulness of LLMs in System testing'*
 
 This repository contains the replication package of the paper *Software System Testing assisted by Large Language
@@ -7,7 +8,7 @@ published at [TO-DO]
 The replication package comprises the test scripts used to generate the test scenarios and system test code as well
 as the different inputs required: the user requirements, the system test cases provided as example, the test scenarios
 used as input and the scenario used as example. The replication package also provides the different outputs of our
-exploratory study in the `/docs` folder, the original raw data is available in the [ZENODO](TO-DO) repository.
+exploratory study in the `/docs` folder, the original raw data is available in the [ZENODO](https://doi.org/10.5281/zenodo.13761150) repository.
 
 ## Replication package structure and naming conventions:
 
