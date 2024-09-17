@@ -16,10 +16,10 @@ The replication package is structured as follows:
 
 1. `/docs`: contains the experimental outputs as well as the experimental baselines, namely as aforementioned .
 
-2. `retorch-llm-rp/src/main`: contains all the necessary Java scripting code for execute the different prompts to the
+2. `/retorch-llm-rp/src/main`: contains all the necessary Java scripting code for execute the different prompts to the
    OpenAI API.
 
-3. `retorch-llm-rp/src/main/resources`: contains all the necessary inputs for the prompts: scenarios, test cases and
+3. `/retorch-llm-rp/src/main/resources`: contains all the necessary inputs for the prompts: scenarios, test cases and
    user requirements as well as the examples.
 
 The naming conventions are :
