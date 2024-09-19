@@ -1,0 +1,40 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.giis-uniovi</groupId>
+        <artifactId>retorch-llm-rp</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <artifactId>retorch-llm-expstudy</artifactId>
+    <name>retorch-llm-rp</name>
+    <description>Replication package for 'Exploratory study of the usefulness of LLMs in System testing'</description>
+    <url>https://github.com/giis-uniovi/retorch-llm-rp</url>
+    <organization>
+        <name>Software Engineering Research Group (GIIS) - University of Oviedo, ES</name>
+        <url>http://giis.uniovi.es/</url>
+    </organization>
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20240303</version>
+        </dependency>
+        <!-- Some utils to remove-create folders-files -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+    </dependencies>
+    <build>
+    </build>
+</project>

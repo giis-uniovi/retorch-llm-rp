@@ -1,0 +1,75 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>io.github.giis-uniovi</groupId>
+    <artifactId>retorch-llm-rp</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>retorch-llm-rp</name>
+    <description>Replication packages of RETORCH combined with LLMs
+    </description>
+    <url>https://github.com/giis-uniovi/retorch-llm-rp</url>
+    <organization>
+        <name>Software Engineering Research Group (GIIS) - University of Oviedo, ES</name>
+        <url>http://giis.uniovi.es/</url>
+    </organization>
+
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <modules>
+        <module>retorch-llm-rp </module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>2.0.16</version>
+            </dependency>
+            <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j2-impl</artifactId>
+                <version>2.23.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+    </build>
+
+    <developers>
+        <developer>
+            <name>Cristian Augusto</name>
+            <url>https://www.augustocristian.es</url>
+        </developer>
+        <developer>
+            <name>Jesús Morán</name>
+            <url>http://giis.uniovi.es</url>
+        </developer>
+        <developer>
+            <name>Claudio de la Riva</name>
+            <url>http://giis.uniovi.es</url>
+        </developer>
+        <developer>
+            <name>Javier Tuya</name>
+            <url>http://giis.uniovi.es</url>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>Apache-2.0</name>
+            <url>https://github.com/giis-uniovi/retorch-llm-rp/blob/main/LICENSE</url>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://github.com/giis-uniovi/retorch-llm-rp</url>
+    </scm>
+
+</project>
