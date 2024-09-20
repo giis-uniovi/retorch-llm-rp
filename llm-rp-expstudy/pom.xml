@@ -6,8 +6,8 @@
         <artifactId>retorch-llm-rp</artifactId>
         <version>1.0.0</version>
     </parent>
-    <artifactId>retorch-llm-expstudy</artifactId>
-    <name>retorch-llm-rp</name>
+    <artifactId>llm-rp-expstudy</artifactId>
+    <name>llm-rp-expstudy</name>
     <description>Replication package for 'Exploratory study of the usefulness of LLMs in System testing'</description>
     <url>https://github.com/giis-uniovi/retorch-llm-rp</url>
     <organization>

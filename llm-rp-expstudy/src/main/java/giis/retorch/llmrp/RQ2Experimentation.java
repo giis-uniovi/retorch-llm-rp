@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class RQ2Experimentation {
     private static final Logger log = LoggerFactory.getLogger(RQ2Experimentation.class);
-    private static final String OUT_BASE_PATH = "retorch-llm-rp/target/prompts-input/RQ2";
+    private static final String OUT_BASE_PATH = "llm-rp-expstudy/target/prompts-input/RQ2";
     static ExperimentationHelper exHelper;
 
     public static void main(String[] args) throws IOException {

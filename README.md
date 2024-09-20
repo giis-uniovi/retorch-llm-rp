@@ -16,10 +16,10 @@ The replication package is structured as follows:
 
 1. `/docs`: contains the experimental outputs as well as the experimental baselines, namely as aforementioned .
 
-2. `/retorch-llm-rp/src/main`: contains all the necessary Java scripting code for execute the different prompts to the
+2. `/llm-rp-expstudy/src/main`: contains all the necessary Java scripting code for execute the different prompts to the
    OpenAI API.
 
-3. `/retorch-llm-rp/src/main/resources`: contains all the necessary inputs for the prompts: scenarios, test cases and
+3. `/llm-rp-expstudy/src/main/resources`: contains all the necessary inputs for the prompts: scenarios, test cases and
    user requirements as well as the examples.
 
 The naming conventions are :
@@ -48,8 +48,8 @@ the [retorch-st-fullteaching](https://github.com/giis-uniovi/retorch-st-fullteac
 
 The user requirements are extracted of the FullTeaching documentation (Fuente Pérez, P. (2017). FullTeaching :
 Aplicación Web de docencia con videoconferencia.) and translated to english. The spanish version can be
-consulted [here](./retorch-llm-rp/src/main/resources/input/inputUserRequirements_spa.txt) and the english
-version [here](./retorch-llm-rp/src/main/resources/input/inputUserRequirements_en.txt).
+consulted [here](./llm-rp-expstudy/src/main/resources/input/inputUserRequirements_spa.txt) and the english
+version [here](./llm-rp-expstudy/src/main/resources/input/inputUserRequirements_en.txt).
 
 ## Treatment Replication Overview
 
@@ -61,17 +61,17 @@ These two parts are detailed below.
 
 - **Test Scenarios Generation:** This process is accomplished through the execution of a single script that take the
   user requirements as input,
-  The output is provided in the resources (`retorch-llm-rp/src/main/resources/outputs`), namely with the version of the model and the
+  The output is provided in the resources (`llm-rp-expstudy/src/main/resources/outputs`), namely with the version of the model and the
   prompting strategy used.
 
 - **System Test Cases Generation:** The process takes the best previously generated test scenarios and several system
   test cases as input. Automatically
   the script makes a cross validation leaving the most close test case in terms of levenshtein distance, and asking the
   model to generate its scenario.
-  The output is provided in the resources (`retorch-llm-rp/src/main/resources/outputs`), namely with the version of the model and the
+  The output is provided in the resources (`llm-rp-expstudy/src/main/resources/outputs`), namely with the version of the model and the
   prompting strategy used and the scenario requested.
 
-In both cases the prompts used are stored in the target folder  (`retorch-llm-rp/src/main/resources/outputs`) for debugging purposes
+In both cases the prompts used are stored in the target folder  (`llm-rp-expstudy/src/main/resources/outputs`) for debugging purposes
 The comparison baseline and how we selected the test cases from the original test suite is described in
 the [Test Scenarios Baseline](./docs/RQ1-TestScenarios-Baseline.md)
 and [Experimental Set-up](./docs/RQ2-ExperimentalSetup.md)
