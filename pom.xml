@@ -23,7 +23,7 @@
     </properties>
 
     <modules>
-        <module>retorch-llm-rp </module>
+        <module>llm-rp-expstudy</module>
     </modules>
 
     <dependencyManagement>

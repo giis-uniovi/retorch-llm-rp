@@ -23,6 +23,7 @@ public class ExperimentationHelper {
 
     static final String PATH_KEY = "CHATGPT_API_KEY";
     private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final String RESOURCES_ROUTE = "llm-rp-expstudy/src/main/resources";
 
     public ExperimentationHelper() {
         //This is the default constructor to avoid smells
@@ -93,7 +94,7 @@ public class ExperimentationHelper {
                 // Format the current date and time
                 String formattedDateTime = now.format(formatter);
 
-                putOutputToFile("retorch-llm-rp/src/main/resources/outputs", experimentname + "-" + model + "-" + formattedDateTime, responseBody);
+                putOutputToFile(RESOURCES_ROUTE + "/outputs", experimentname + "-" + model + "-" + formattedDateTime, responseBody);
                 conn.disconnect();
             }
 
@@ -149,7 +150,7 @@ public class ExperimentationHelper {
     }
 
     public String getTestCasesCrossValidation(int pos) throws IOException {
-        String[] rawTestCases = openFileLoadContent("retorch-llm-rp/src/main/resources/input/inputSystemTestCases.txt").split("//TC");
+        String[] rawTestCases = openFileLoadContent(RESOURCES_ROUTE+"/input/inputSystemTestCases.txt").split("//TC");
         List<String> contentList = new ArrayList<>(Arrays.asList(rawTestCases));
         contentList.remove(pos);
 
@@ -164,15 +165,15 @@ public class ExperimentationHelper {
     }
 
     public String getTestScenarios() throws IOException {
-        return openFileLoadContent("retorch-llm-rp/src/main/resources/input/inputTestScenarios.txt");
+        return openFileLoadContent(RESOURCES_ROUTE + "/input/inputTestScenarios.txt");
     }
 
     public String getUserRequirements() throws IOException {
-        return openFileLoadContent("retorch-llm-rp/src/main/resources/input/inputUserRequirements_en.txt");
+        return openFileLoadContent(RESOURCES_ROUTE + "/input/inputUserRequirements_en.txt");
     }
 
     public String getTestScenarioExample() throws IOException {
-        return openFileLoadContent("retorch-llm-rp/src/main/resources/input/inputTestScenarioExample.txt");
+        return openFileLoadContent(RESOURCES_ROUTE + "/input/inputTestScenarioExample.txt");
     }
 
 }
