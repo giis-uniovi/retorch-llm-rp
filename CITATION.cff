@@ -40,7 +40,7 @@ preferred-citation:
       given-names: "Javier"
       orcid: "https://orcid.org/0000-0002-1091-934X"
   title: "Software System Testing assisted by Large Language Models: An Exploratory Study"
-  year: 2024
+  year: 2025
   collection-title: "Proceedings of the 36th International Conference on Testing Software and Systems"
   conference:
     name: "36th International Conference on Testing Software and Systems"
@@ -48,11 +48,11 @@ preferred-citation:
     address: "38-51 Bedford Way"
     city: "London"
     region: "London"
-    post-code: "WC1H 0DG"  # Updated the postcode for accuracy
+    post-code: "WC1H 0DG"  
     country: "United Kingdom"
     date-start: "2024-10-30"
     date-end: "2024-11-01"
   pages:
-    start: 42  # TO-DO: Replace with actual page number when available
-    end: 45    # TO-DO: Replace with actual page number when available
-  doi: "10.0000/00000"  # TO-DO: Replace with actual DOI when available
+    start: 1 
+    end: 17  
+  doi: "10.1007/978-3-031-80889-0_17" 
