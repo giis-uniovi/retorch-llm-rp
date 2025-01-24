@@ -115,7 +115,7 @@ paper itself.
 
 - Cristian Augusto, Jesús Morán, Antonia Bertolino, Claudio de la Riva, and Javier Tuya, “Software System Testing
   assisted by Large Language Models: An Exploratory Study” in 36th International Conference on Testing Software and Systems, ICTSS24, London (UK), 2025, LNCS 15383, pp.
-  1–17., Springer Cham   [https://doi.org/10.1007/978-3-031-80889-0_17](https://doi.org/10.1007/978-3-031-80889-0_17) - [Full Paper available](TO-DO) - [Authors version](TO-DO) -
+  239–255., Springer Cham   [https://doi.org/10.1007/978-3-031-80889-0_17](https://doi.org/10.1007/978-3-031-80889-0_17) - [Full Paper available](TO-DO) - [Authors version](TO-DO) -
   [Download citation](TO-DO)
 
 ## Acknowledgments
