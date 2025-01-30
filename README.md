@@ -3,7 +3,7 @@
 
 This repository contains the replication package of the paper *Software System Testing assisted by Large Language
 Models: An Exploratory Study*
-published at [TO-DO]
+published at *36th International Conference on Testing Software and Systems (ICTSS24)*
 
 The replication package comprises the test scripts used to generate the test scenarios and system test code as well
 as the different inputs required: the user requirements, the system test cases provided as example, the test scenarios
@@ -114,9 +114,9 @@ paper itself.
 ## Citing this work
 
 - Cristian Augusto, Jesús Morán, Antonia Bertolino, Claudio de la Riva, and Javier Tuya, “Software System Testing
-  assisted by Large Language Models: An Exploratory Study” in TO-DO, TBC, Ed., TO-DO: TO-DO, 2024, pp.
-  1–13.   https://doi.org/TO-DO - [Full Paper available](TO-DO) - [Authors version](TO-DO) -
-  [Download citation](TO-DO)
+  assisted by Large Language Models: An Exploratory Study” in 36th International Conference on Testing Software and Systems, ICTSS24, London (UK), 2025, LNCS 15383, pp.
+  239–255., Springer Cham   [https://doi.org/10.1007/978-3-031-80889-0_17](https://doi.org/10.1007/978-3-031-80889-0_17) - [Full Paper available](https://link.springer.com/chapter/10.1007/978-3-031-80889-0_17) - [Authors version](https://hdl.handle.net/10651/76363) -
+  [Download citation](https://citation-needed.springer.com/v2/references/10.1007/978-3-031-80889-0_17?format=bibtex&flavour=citation)
 
 ## Acknowledgments
 
