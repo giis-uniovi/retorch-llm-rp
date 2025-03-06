@@ -24,6 +24,7 @@
 
     <modules>
         <module>llm-rp-expstudy</module>
+        <module>llm-rp-resourceidentification</module>
     </modules>
 
     <dependencyManagement>
