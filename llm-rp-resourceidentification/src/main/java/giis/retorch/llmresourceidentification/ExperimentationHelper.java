@@ -1,4 +1,4 @@
-package giis.retorch.llmrp;
+package giis.retorch.llmresourceidentification;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -12,6 +12,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -111,6 +113,16 @@ public class ExperimentationHelper {
             System.exit(-1);
         }
 
+    }
+
+    public  String loadFileIntoString(String path){
+        String content="";
+        try {
+            content = Files.readString(Paths.get(path));
+        } catch (IOException e) {
+            log.error("Error reading the file: {} " , e.getMessage());
+        }
+        return content;
     }
 
     public void putOutputToFile(String filePath, String namePrompt, String output) throws IOException {
