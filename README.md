@@ -73,8 +73,8 @@ These two parts are detailed below.
 
 In both cases the prompts used are stored in the target folder  (`llm-rp-expstudy/src/main/resources/outputs`) for debugging purposes
 The comparison baseline and how we selected the test cases from the original test suite is described in
-the [Test Scenarios Baseline](./docs/RQ1-TestScenarios-Baseline.md)
-and [Experimental Set-up](./docs/RQ2-ExperimentalSetup.md)
+the [Test Scenarios Baseline](docs/llm-rp-study/RQ1-TestScenarios-Baseline.md)
+and [Experimental Set-up](docs/llm-rp-study/RQ2-ExperimentalSetup.md)
 
 ## Treatment Replication Procedure
 
@@ -91,15 +91,15 @@ To execute the different Java scripts, your system needs the following requireme
 The outputs of the replication procedure are the following:
 
 - Test Scenarios:
-    - [OpenAI GPT-4o using Few-Shot](./docs/RQ1-TestScenarios-GPT4o-FShot.md)
-    - [OpenAI GPT-4o using Few Shot + Chain-of-Though](./docs/RQ1-TestScenarios-GPT4o-CoT.md)
-    - [OpenAI GPT-4o mini using Few-Shot](./docs/RQ1-TestScenarios-GPT4o-mini-FShot.md)
-    - [OpenAI GPT-4o mini using Few Shot + Chain-of-Though](./docs/RQ1-TestScenarios-GPT4o-mini-CoT.md)
+    - [OpenAI GPT-4o using Few-Shot](docs/llm-rp-study/RQ1-TestScenarios-GPT4o-FShot.md)
+    - [OpenAI GPT-4o using Few Shot + Chain-of-Though](docs/llm-rp-study/RQ1-TestScenarios-GPT4o-CoT.md)
+    - [OpenAI GPT-4o mini using Few-Shot](docs/llm-rp-study/RQ1-TestScenarios-GPT4o-mini-FShot.md)
+    - [OpenAI GPT-4o mini using Few Shot + Chain-of-Though](docs/llm-rp-study/RQ1-TestScenarios-GPT4o-mini-CoT.md)
 - System Test Cases (each file contains 4o/4o-mini and both prompting techniques):
-    - [User view enrolled courses](./docs/RQ2-A-ViewingEnrolledCourses.md)
-    - [User access a course and view its classes](/docs/RQ2-B-AccessCourseViewClasses.md)
-    - [Teacher creates a course](./docs/RQ2-C-TeacherCreatesCourse.md)
-    - [User access a calendar](./docs/RQ2-D-UserAccessCalendar.md)
+    - [User view enrolled courses](docs/llm-rp-study/RQ2-A-ViewingEnrolledCourses.md)
+    - [User access a course and view its classes](/docs/llm-rp-study/RQ2-B-AccessCourseViewClasses.md)
+    - [Teacher creates a course](docs/llm-rp-study/RQ2-C-TeacherCreatesCourse.md)
+    - [User access a calendar](docs/llm-rp-study/RQ2-D-UserAccessCalendar.md)
 
 ## Contributing
 
