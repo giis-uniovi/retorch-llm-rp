@@ -44,11 +44,14 @@ public class RQ1Experimentation {
 
 
     public static String promptIdentifyResourcesFewShotCoT(String resourcesJsonFile, String testExamples, String testtoIdentify) {
-        return "Let’s think step by step, You're a expert tester able to identify the test Resources and how are used in the System Test cases. The " +
-                "test Resources available in the system are in the following JSON file:\n \"\"\"" + resourcesJsonFile + "\"\"\"\n" +
-                "the Resources are annotated with a @AccessMode annotation. Let's Identify the different Resources and focal methods: a method or set of methods that are" +
-                " reachable from the test preﬁx, that is more likely to use the Resource. The access modes generated only can refer to the previous Resources contained in the JSON file\n " +
-                "Here there are examples of methods already identified:\n \"\"\"" + testExamples + "\"\"\" \n" +
+        return "You are an expert software tester who specializes in system testing. Your task is to identify the test " +
+                "Resources used in system test cases and annotate them with \\@AccessMode.\n " +
+                "The available test Resources are in the following JSON file:\n \"\"\"" + resourcesJsonFile + "\"\"\"\n" +
+                " each resource is annotated with an \\@AccessMode annotation.\n" +
+                "The goal is to identify the different Resources and focal methods, which are methods that are reachable " +
+                "from the test prefix and are most likely to interact with a given Resource. The generated access modes " +
+                "must only refer to the Resources defined in the JSON file.\n" +
+                "Here, there are examples of methods already identified:\n \"\"\"" + testExamples + "\"\"\" \n" +
                 "Identify the Resources of the following test method:\n\"\"\"" + testtoIdentify + "\"\"\" \n" +
                 "First get the explanation about why the Resources are required, and then generate the @AccessMode annotations.";
     }
