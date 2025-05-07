@@ -5,6 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class RQ1Experimentation {
     private static final Logger log = LoggerFactory.getLogger(RQ1Experimentation.class);
@@ -13,6 +17,29 @@ public class RQ1Experimentation {
 
     public static void main(String[] args) throws IOException {
         exHelper = new ExperimentationHelper();
+        List<String> testCasesList  = List.of(
+                "oneToOneChatInSessionChrome",
+                "courseRestOperations",
+                "courseInfoRestOperations",
+                "sessionRestOperations",
+                "forumRestOperations",
+                "filesRestOperations",
+                "attendersRestOperations",
+                "sessionTest",
+                "oneToOneVideoAudioSessionChrome",
+                "studentCourseMainTest",
+                "teacherCourseMainTest",
+                "teacherCreateAndDeleteCourseTest",
+                "teacherEditCourseValues",
+                "teacherDeleteCourseTest",
+                "forumLoadEntriesTest",
+                "forumNewEntryTest",
+                "forumNewCommentTest",
+                "forumNewReply2CommentTest",
+                "spiderLoggedTest",
+                "spiderUnLoggedTest",
+                "loginTest"
+        );
 
         //= promptTestScenariosFewShot(exHelper.getUserRequirements(), exHelper.getTestScenarioExample());
         //exHelper.putOutputToFile(getOutBasePath(), "few-shot-prompt", prompt);
@@ -22,20 +49,22 @@ public class RQ1Experimentation {
         //log.debug("The prompt for FewShot is: {}", prompt);
 
         String jsonResource = exHelper.loadFileIntoString("llm-rp-resourceidentification/src/main/resources/RETORCHFullTeachingResources.json");
-        String testExamples = exHelper.loadFileIntoString("llm-rp-resourceidentification/src/main/resources/input/E2EFullteachingTestsExamples.txt");
-        String testMethod = "";
-        for (int i = 1; i <= 9; i++) {
-            testMethod=exHelper.loadFileIntoString("llm-rp-resourceidentification/src/main/resources/input/TC" + i + ".txt");
 
-            String prompt = promptIdentifyResourcesFewShotCoT(jsonResource, testExamples, testMethod);
+        for (String testName:testCasesList) {
+            String testCase=exHelper.getTestCase(testName);
+            String testExamples=exHelper.getTestExamples(testName);
+
+            String prompt = promptIdentifyResourcesFewShotCoT(jsonResource, testExamples, testCase);
             log.debug("The prompt for Few Shot with CoT is: {}", prompt);
-            exHelper.putOutputToFile(getOutBasePath(), "few-shot-CoT-prompt"+i, prompt);
+            exHelper.putOutputToFile(getOutBasePath(), "few-shot-CoT-prompt"+testName, prompt);
         }
 
 
         //exHelper.sendChatGPTRequest(prompt, "gpt-4o-mini-2024-07-18", "RQ1-few-shot-cot-generateTestScenarios");
         //exHelper.sendChatGPTRequest(prompt, "gpt-4o-2024-05-13", "RQ1-few-shot-cot-generateTestScenarios");
     }
+
+
 
 
     public static String getOutBasePath() {

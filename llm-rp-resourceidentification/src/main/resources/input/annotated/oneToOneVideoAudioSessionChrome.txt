@@ -1,0 +1,125 @@
+    @AccessMode(resID = "loginservice", concurrency = 10, sharing = true, accessMode = "READONLY")
+    @AccessMode(resID = "openvidu", concurrency = 10, sharing = true, accessMode = "READWRITE")
+    @AccessMode(resID = "session", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "executor", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webbrowser", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webserver", concurrency = 1, accessMode = "READWRITE")
+    @DisplayName("oneToOneVideoAudioSessionChrome")
+    @ParameterizedTest
+    @MethodSource("data")
+    void oneToOneVideoAudioSessionChrome(String mail, String password, String role) throws URISyntaxException, MalformedURLException, NotLoggedException, ElementNotFoundException, InterruptedException { //124+ 232+ 20 set up +8 lines teardown = 564
+
+        // TEACHER
+        this.slowLogin(user, mail, password);//24
+
+        log.info("{} entering first course", user.getClientData());
+        user.getWaiter().until(
+                ExpectedConditions.presenceOfElementLocated(By.cssSelector(
+                        ("ul.collection li.collection-item:first-child div.course-title"))));
+        user.getDriver().findElement(By.cssSelector(
+                        "ul.collection li.collection-item:first-child div.course-title"))
+                .click();
+
+        log.info("{} navigating to 'Sessions' tab", user.getClientData());
+        user.getWaiter().until(ExpectedConditions.presenceOfElementLocated(
+                By.cssSelector(("#md-tab-label-0-1"))));
+        user.getDriver().findElement(By.cssSelector("#md-tab-label-0-1"))
+                .click();
+
+        log.info("{} getting into first session", user.getClientData());
+        user.getDriver()
+                .findElement(By.cssSelector(
+                        "ul div:first-child li.session-data div.session-ready"))
+                .click();
+
+        user.getWaiter().until(ExpectedConditions.presenceOfElementLocated(
+                By.cssSelector(("div.participant video"))));
+
+        checkVideoPlaying(user,
+                user.getDriver()
+                        .findElement(By.cssSelector(("div.participant video"))),
+                "div.participant"); //30 lines
+        // STUDENT
+        student = setupBrowser(STUDENT_BROWSER, TJOB_NAME + "-" +TEST_NAME, "STUDENT",5);//27 lines
+
+        slowLogin(student, studentMail, studentPass);
+
+        log.info("{} entering first course", student.getClientData());
+        student.getWaiter().until(
+                ExpectedConditions.presenceOfElementLocated(By.cssSelector(
+                        ("ul.collection li.collection-item:first-child div.course-title"))));
+        student.getDriver().findElement(By.cssSelector(
+                        "ul.collection li.collection-item:first-child div.course-title"))
+                .click();
+
+        log.info("{} navigating to 'Courses' tab", student.getClientData());
+        student.getWaiter().until(ExpectedConditions.presenceOfElementLocated(
+                By.cssSelector(("#md-tab-label-0-1"))));
+        student.getDriver().findElement(By.cssSelector("#md-tab-label-0-1"))
+                .click();
+
+        log.info("{} getting into first session", student.getClientData());
+        student.getDriver().findElement(By.cssSelector("ul div:first-child li.session-data div.session-ready")).click();
+
+        student.getWaiter().until(ExpectedConditions.presenceOfElementLocated(
+                By.cssSelector(("div.participant video"))));
+
+        checkVideoPlaying(student,
+                student.getDriver()
+                        .findElement(By.cssSelector(("div.participant video"))),
+                "div.participant");//30 lines
+        // Student asks for intervention
+        student.getWaiter().until(ExpectedConditions.elementToBeClickable(By
+                .xpath("//div[@id='div-header-buttons']//i[text() = 'record_voice_over']")));
+        log.info("{} asking for intervention", student.getClientData());
+        student.getDriver().findElement(By.xpath(
+                        "//div[@id='div-header-buttons']//i[text() = 'record_voice_over']"))
+                .click();
+
+        // Teacher accepts intervention
+        user.getWaiter().until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//a[contains(@class, 'usr-btn')]")));
+        log.info("{} accepts student intervention", user.getClientData());
+        user.getDriver()
+                .findElement(By.xpath("//a[contains(@class, 'usr-btn')]"))
+                .click();
+        // Check both videos for both users
+        student.getWaiter().until(ExpectedConditions.presenceOfElementLocated(
+                By.cssSelector(("div.participant-small video"))));
+        // Small video of student
+        checkVideoPlaying(student,
+                student.getDriver().findElement(
+                        By.cssSelector(("div.participant-small video"))),
+                "div.participant-small");//30 lines
+        // Main video of student
+        checkVideoPlaying(student,
+                student.getDriver()
+                        .findElement(By.cssSelector(("div.participant video"))),
+                "div.participant");//30 lines
+        user.getWaiter().until(ExpectedConditions.presenceOfElementLocated(
+                By.cssSelector(("div.participant-small video"))));
+        // Small video of teacher
+        checkVideoPlaying(user,
+                user.getDriver().findElement(
+                        By.cssSelector(("div.participant-small video"))),
+                "div.participant-small");//30 lines
+        // Main video of teacher
+        checkVideoPlaying(user,
+                user.getDriver()
+                        .findElement(By.cssSelector(("div.participant video"))),
+                "div.participant");
+        // Teacher stops student intervention
+        user.getWaiter().until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//a[contains(@class, 'usr-btn')]")));
+        log.info("{} canceling student intervention", user.getClientData());
+        user.getDriver()
+                .findElement(By.xpath("//a[contains(@class, 'usr-btn')]"))
+                .click();
+        // Wait until only one video
+        user.getWaiter().until(ExpectedConditions
+                .not(ExpectedConditions.presenceOfAllElementsLocatedBy(
+                        By.cssSelector(("div.participant-small video")))));
+        student.getWaiter().until(ExpectedConditions
+                .not(ExpectedConditions.presenceOfAllElementsLocatedBy(
+                        By.cssSelector(("div.participant-small video")))));
+    }

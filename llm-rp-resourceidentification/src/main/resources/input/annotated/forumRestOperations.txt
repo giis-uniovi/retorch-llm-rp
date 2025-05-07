@@ -1,0 +1,94 @@
+    @AccessMode(resID = "loginservice", concurrency = 10, sharing = true, accessMode = "READONLY")
+    @AccessMode(resID = "openvidumock", concurrency = 10, sharing = true, accessMode = "NOACCESS")
+    @AccessMode(resID = "forum", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "executor", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webbrowser", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webserver", concurrency = 1, accessMode = "READWRITE")
+    @DisplayName("forumRestOperations")
+    @ParameterizedTest
+    @MethodSource("data")
+    void forumRestOperations(String mail, String password, String role) throws ElementNotFoundException, NotLoggedException, InterruptedException { //60+66+65 set up +60 lines teardown =251
+        loginAndCreateNewCourse(mail,password);
+        enterCourseAndNavigateTab(COURSE_NAME, "forum-tab-icon");//16 lines
+        log.info("Adding new entry to the forum");
+        openDialog("#add-entry-icon", user);//8lines
+        // Find form elements
+        WebElement titleField = user.getDriver().findElement(By.id("input-post-title"));
+        WebElement commentField = user.getDriver().findElement(By.id("input-post-comment"));
+        String title = "TEST FORUM ENTRY";
+        String comment = "TEST FORUM COMMENT";
+        String entryDate = "a few seconds ago";
+        // Fill input fields
+        titleField.sendKeys(title);
+        commentField.sendKeys(comment);
+        user.getDriver().findElement(By.id("post-modal-btn")).click();
+        waitForDialogClosed("course-details-modal", "Addition of entry failed", user);////14 lines
+        // Check fields of new entry
+        WebElement entryEl = user.getDriver().findElement(By.cssSelector("li.entry-title"));
+        user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("li.entry-title .forum-entry-title"), title),
+                "Unexpected entry title in the forum");
+        user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("li.entry-title .forum-entry-author"), TEACHER_NAME),
+                "Unexpected entry author in the forum");
+        user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("li.entry-title .forum-entry-date"), entryDate),
+                "Unexpected entry date in the forum");
+        log.info("New entry successfully added to the forum");
+        log.info("Entering the new entry");
+        entryEl.click();
+        user.waitUntil(ExpectedConditions.textToBe(
+                By.cssSelector(".comment-block > app-comment:first-child > div.comment-div .message-itself"),
+                comment), "Unexpected entry title in the entry details view");
+        user.waitUntil(ExpectedConditions.textToBe(
+                By.cssSelector(".comment-block > app-comment:first-child > div.comment-div .forum-comment-author"),
+                TEACHER_NAME), "Unexpected entry author in the entry details view");
+        // Comment reply
+        log.info("Adding new replay to the entry's only comment");
+        String reply = "TEST FORUM REPLY";
+        openDialog(".replay-icon", user);//8lines
+        commentField = user.getDriver().findElement(By.id("input-post-comment"));
+        commentField.sendKeys(reply);
+        user.getDriver().findElement(By.id("post-modal-btn")).click();
+        waitForDialogClosed("course-details-modal", "Addition of entry reply failed", user);//14 lines
+        user.waitUntil(ExpectedConditions.textToBe(By.cssSelector(
+                        ".comment-block > app-comment:first-child > div.comment-div div.comment-div .message-itself"),
+                reply), "Unexpected reply message in the entry details view");
+        user.waitUntil(ExpectedConditions.textToBe(By.cssSelector(
+                        ".comment-block > app-comment:first-child > div.comment-div div.comment-div .forum-comment-author"),
+                TEACHER_NAME), "Unexpected reply author in the entry details view");
+        log.info("Replay successfully added");
+        // Forum deactivation
+        user.getDriver().findElement(By.id("entries-sml-btn")).click();
+        log.info("Deactivating forum");
+        openDialog("#edit-forum-icon", user);//8lines
+        user.waitUntil(ExpectedConditions.elementToBeClickable(By.id(("label-forum-checkbox"))),
+                "Checkbox for forum deactivation not clickable");
+        user.getDriver().findElement(By.id("label-forum-checkbox")).click();
+        user.waitUntil(ExpectedConditions.elementToBeClickable(By.id(("put-modal-btn"))),
+                "Button for forum deactivation not clickable");
+        user.getDriver().findElement(By.id("put-modal-btn")).click();
+        waitForDialogClosed("put-delete-modal", "Deactivation of forum failed", user);//14 lines
+        user.waitUntil(ExpectedConditions.elementToBeClickable(By.cssSelector("app-error-message .card-panel.warning")),
+                "Warning card (forum deactivated) missing");
+        log.info("Forum successfully deactivated");
+        CourseNavigationUtilities.deleteCourse(user.getDriver(), COURSE_NAME);
+    }
+
+    private void enterCourseAndNavigateTab(String courseName, String tabId) { //16 lines
+        log.info("Entering course {}", courseName);
+        //All these tests always create a new course, so we wait for 3-courses in the main page (more than 2)
+        user.waitUntil(ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("#course-list .course-list-item div.course-title span"), 2), "The number of courses should be 3");
+        List<WebElement> allCourses = user.getDriver()
+                .findElements(By.cssSelector("#course-list .course-list-item div.course-title span"));
+        WebElement courseSpan = null;
+        for (WebElement c : allCourses) {
+            if (c.getText().equals(courseName)) {
+                courseSpan = c;
+                break;
+            }
+        }
+
+        assertNotNull(courseSpan, "The course with the name '" + courseName + "' could not be found. Total courses available: " + allCourses.size());
+        courseSpan.click();
+        user.waitUntil(ExpectedConditions.textToBe(By.id("main-course-title"), courseName), "Unexpected course title");
+        log.info("Navigating to tab by clicking icon with id '{}'", tabId);
+        user.getDriver().findElement(By.id(tabId)).click();
+    }

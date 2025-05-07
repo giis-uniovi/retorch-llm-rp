@@ -1,0 +1,115 @@
+    @AccessMode(resID = "loginservice", concurrency = 10, sharing = true, accessMode = "READONLY")
+    @AccessMode(resID = "openvidu", concurrency = 10, sharing = true, accessMode = "READWRITE")
+    @AccessMode(resID = "configuration", concurrency = 1, sharing = false, accessMode = "READONLY")
+    @AccessMode(resID = "executor", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webbrowser", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webserver", concurrency = 1, accessMode = "READWRITE")
+    @DisplayName("oneToOneChatInSessionChrome")
+    @ParameterizedTest
+    @MethodSource("data")
+    @Tag("Multiuser Test")
+    void oneToOneChatInSessionChrome(String mail, String password, String role ) throws URISyntaxException, MalformedURLException, NotLoggedException, ElementNotFoundException, InterruptedException { //197 Lines of code
+        int numberpriormessages;
+
+        // TEACHER
+        this.slowLogin(user, mail, password);//24
+
+        log.info("{} entering first course", user.getClientData());
+        user.getWaiter().until(ExpectedConditions.presenceOfElementLocated(
+                By.cssSelector(("ul.collection li.collection-item:first-child div.course-title"))));
+        user.getDriver().findElement(By.cssSelector("ul.collection li.collection-item:first-child div.course-title"))
+                .click();
+
+        log.info("{} navigating to 'Sessions' tab", user.getClientData());
+        user.getWaiter().until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(("#md-tab-label-0-1"))));
+        user.getDriver().findElement(By.cssSelector("#md-tab-label-0-1")).click();
+
+        log.info("{} getting into first session", user.getClientData());
+        user.getDriver().findElement(By.cssSelector("ul div:first-child li.session-data div.session-ready")).click();
+        user.waitUntil(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#fixed-icon")), "Element fixed-icon not clickable");
+        // Check connected message
+        user.getDriver().findElement(By.cssSelector("#fixed-icon")).click();
+
+        checkSystemMessage("Connected", user, 100); // 6 lines
+        // STUDENT
+        student = setupBrowser(STUDENT_BROWSER, TJOB_NAME + "-" +"oneToOneChatInSessionChrome", "STUDENT",5);//27 lines
+
+        this.slowLogin(student, studentMail, studentPass);
+
+        student.getWaiter().until(ExpectedConditions.presenceOfElementLocated(
+                By.cssSelector(("ul.collection li.collection-item:first-child div.course-title"))));
+        student.getDriver().findElement(By.cssSelector("ul.collection li.collection-item:first-child div.course-title"))
+                .click();
+        student.getWaiter().until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(("#md-tab-label-0-1"))));
+        student.getDriver().findElement(By.cssSelector("#md-tab-label-0-1")).click();
+
+        student.getDriver().findElement(By.cssSelector("ul div:first-child li.session-data div.session-ready")).click();
+        student.getDriver().findElement(By.cssSelector("#fixed-icon")).click();
+
+        checkSystemMessage("Connected", student, 0); //6 lines
+
+
+        checkSystemMessage(STUDENT_NAME + " has connected", user, 100); //6 lines
+        checkSystemMessage(TEACHER_NAME + " has connected", student, 100);//6lines
+        // Test chat
+
+        String teacherMessage = "TEACHER CHAT MESSAGE";
+        String studentMessage = "STUDENT CHAT MESSAGE";
+        numberpriormessages = getNumberMessages(user);
+        WebElement chatInputTeacher = user.getDriver().findElement(By.id("message"));
+        chatInputTeacher.sendKeys(teacherMessage);
+        user.getWaiter().until(ExpectedConditions.elementToBeClickable(By.id("send-btn")));
+        user.getDriver().findElement(By.id("send-btn")).click();
+
+        checkOwnMessage(teacherMessage, TEACHER_NAME, user, numberpriormessages);//7 lines
+        checkStrangerMessage(teacherMessage, TEACHER_NAME, student, numberpriormessages); //8lines
+        numberpriormessages = getNumberMessages(student);
+        WebElement chatInputStudent = student.getDriver().findElement(By.id("message"));
+        chatInputStudent.sendKeys(studentMessage);
+        student.getWaiter().until(ExpectedConditions.elementToBeClickable(By.id("send-btn")));
+        student.getDriver().findElement(By.id("send-btn")).click();
+        checkStrangerMessage(studentMessage, STUDENT_NAME, user, numberpriormessages); //8lines
+        checkOwnMessage(studentMessage, STUDENT_NAME, student, numberpriormessages);//7lines
+    }
+
+    private void checkOwnMessage(String message, String sender, BrowserUser user, int numberpriormessages) { //7Lines
+        log.info("Checking own message (\"{}\") for {}", message, user.getClientData());
+        user.getWaiter().until(ExpectedConditions.numberOfElementsToBeMoreThan(By.tagName("app-chat-line"), numberpriormessages));
+        List<WebElement> messages = user.getDriver().findElements(By.tagName("app-chat-line"));
+        WebElement lastMessage = messages.get(messages.size() - 1);
+        WebElement msgUser = lastMessage.findElement(By.cssSelector(".own-msg .message-header .user-name"));
+        WebElement msgContent = lastMessage.findElement(By.cssSelector(".own-msg .message-content .user-message"));
+        user.getWaiter().until(ExpectedConditions.textToBePresentInElement(msgUser, sender));
+        user.getWaiter().until(ExpectedConditions.textToBePresentInElement(msgContent, message));
+    }
+
+    private void checkStrangerMessage(String message, String sender, BrowserUser user, int numberpriormessages) {//8 Lines
+        log.info("Checking another user's message (\"{}\") for {}", message, user.getClientData());
+        user.getWaiter().until(ExpectedConditions.numberOfElementsToBeMoreThan(By.tagName("app-chat-line"), numberpriormessages));
+        List<WebElement> messages = user.getDriver().findElements(By.tagName("app-chat-line"));
+        WebElement lastMessage = messages.get(messages.size() - 1);
+        WebElement msgUser = lastMessage.findElement(By.cssSelector(".stranger-msg .message-header .user-name"));
+        WebElement msgContent = lastMessage.findElement(By.cssSelector(".stranger-msg .message-content .user-message"));
+        user.getWaiter().until(ExpectedConditions.textToBePresentInElement(msgUser, sender));
+        user.getWaiter().until(ExpectedConditions.textToBePresentInElement(msgContent, message));
+    }
+
+    private void checkSystemMessage(String message, BrowserUser user, int messagenumber) { //6 lines
+        log.info("Checking system message (\"{}\") for {}", message, user.getClientData());
+        user.getWaiter().until(ExpectedConditions.numberOfElementsToBeMoreThan(By.tagName("app-chat-line"), 0));
+        List<WebElement> messages = user.getDriver().findElements(By.tagName("app-chat-line"));
+        WebElement lastMessage;
+        if (messagenumber >= 0 && messagenumber < messages.size()) {
+            lastMessage = messages.get(messagenumber);
+        } else {
+            lastMessage = messages.get(messages.size() - 1);
+        }
+
+        WebElement msgContent = lastMessage.findElement(By.cssSelector(".system-msg"));
+        user.getWaiter().until(ExpectedConditions.textToBePresentInElement(msgContent, message));
+    }
+
+    private int getNumberMessages(BrowserUser user) {
+        return user.getDriver().findElements(By.tagName("app-chat-line")).size();
+    }
+

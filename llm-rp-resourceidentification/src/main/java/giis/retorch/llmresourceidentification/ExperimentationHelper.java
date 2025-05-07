@@ -31,6 +31,37 @@ public class ExperimentationHelper {
         //This is the default constructor to avoid smells
     }
 
+    public String getTestExamples(String testMethodName){
+
+        List<String> listExamples = List.of("oneToOneChatInSessionChrome","oneToOneVideoAudioSessionChrome","forumRestOperations");
+
+        if (listExamples.contains(testMethodName)){
+            listExamples.remove(testMethodName);
+            listExamples.add("forumRestOperations");
+        }
+        StringBuilder allContents = new StringBuilder();
+
+        for (String fileName : listExamples) {
+            String filePath = "llm-rp-resourceidentification/src/main/resources/input/annotated/" + fileName+".txt";
+            try {
+                String content = Files.readString(Paths.get(filePath));
+                allContents.append(content).append("\n"); // Agrega salto de línea entre archivos
+            } catch (IOException e) {
+                log.error("Error leyendo el archivo: {}", filePath);
+
+            }
+        }
+        return allContents.toString();
+
+
+    }
+
+    public String getTestCase(String testMethodName) {
+        String filePath = "llm-rp-resourceidentification/src/main/resources/input/no-annotated/"+testMethodName+".txt";
+
+        String testCase= loadFileIntoString(filePath);
+        return testCase;
+    }
     public void sendChatGPTRequest(String body, String model, String experimentname) throws IOException {
 
         String apiKey = System.getProperty(PATH_KEY) != null ? System.getProperty(PATH_KEY) : System.getenv(PATH_KEY);

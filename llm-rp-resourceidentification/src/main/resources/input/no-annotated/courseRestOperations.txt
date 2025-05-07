@@ -1,0 +1,35 @@
+    @AccessMode(resID = "loginservice", concurrency = 10, sharing = true, accessMode = "READONLY")
+    @AccessMode(resID = "openvidumock", concurrency = 10, sharing = true, accessMode = "NOACCESS")
+    @AccessMode(resID = "configuration", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "executor", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webbrowser", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webserver", concurrency = 1, accessMode = "READWRITE")
+    @DisplayName("courseRestOperations")
+    @ParameterizedTest
+    @MethodSource("data")
+    void courseRestOperations(String mail, String password, String role ) throws ElementNotFoundException, NotLoggedException, InterruptedException {
+        loginAndCreateNewCourse(mail,password);
+
+        editCourse();
+
+        CourseNavigationUtilities.deleteCourse(user.getDriver(), COURSE_NAME + EDITED); // Tear down
+    }
+
+    private void loginAndCreateNewCourse(String mail, String password) throws ElementNotFoundException, NotLoggedException, InterruptedException {
+        slowLogin(user, mail, password);
+        CourseNavigationUtilities.newCourse(user.getDriver(), COURSE_NAME);
+    }
+
+    private void editCourse() {
+        log.info("Editing course");
+        String editedCourseName = COURSE_NAME + EDITED;
+        List<WebElement> editIcons = user.getDriver().findElements(By.className("course-put-icon"));
+        openDialog(editIcons.get(editIcons.size() - 1), user);
+        user.waitUntil(ExpectedConditions.elementToBeClickable(By.id("input-put-course-name")), "Input for course name not clickable");
+        WebElement courseNameInput = user.getDriver().findElement(By.id("input-put-course-name"));
+        courseNameInput.clear();
+        courseNameInput.sendKeys(editedCourseName);
+        user.getDriver().findElement(By.id("submit-put-course-btn")).click();
+        waitForDialogClosed("course-modal", "Edition of course failed", user);
+        user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("#course-list .course-list-item:last-child div.course-title span"), editedCourseName), "Unexpected course name");
+    }
