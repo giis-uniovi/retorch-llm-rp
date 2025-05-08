@@ -1,0 +1,32 @@
+    @AccessMode(resID = "loginservice", concurrency = 10, sharing = true, accessMode = "READONLY")
+    @AccessMode(resID = "openvidumock", concurrency = 10, sharing = true, accessMode = "NOACCESS")
+    @AccessMode(resID = "course", concurrency = 15, sharing = true, accessMode = "READWRITE")
+    @AccessMode(resID = "executor", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webbrowser", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webserver", concurrency = 1, accessMode = "READWRITE")
+    @ParameterizedTest
+    @MethodSource("data")
+    @DisplayName("spiderLoggedTest")
+    void spiderLoggedTest(String mail, String password, String role) throws NotLoggedException, ElementNotFoundException, InterruptedException { //140 + 28 set up +13 lines teardown = 181
+        this.slowLogin(user, mail, password);
+        //*navigate from home*//*
+        NavigationUtilities.getUrlAndWaitFooter(driver, HOST); //13 lines
+        List<WebElement> pageLinks = SpiderNavigation.getPageLinks(driver); //29 lines
+        Map<String, String> explored = new HashMap<>();
+        //Navigate the links...
+        //Problem: once one is pressed the rest will be unusable as the page reloads...
+        explored = SpiderNavigation.exploreLinks(driver, pageLinks, explored, DEPTH);//49 lines
+        List<String> failed_links = new ArrayList<>();
+        System.out.println(mail + " tested " + explored.size() + " urls");
+        explored.forEach((link, result) -> {
+            log.debug("\t {} => {}", link, result);
+            if (result.equals("KO")) {
+                failed_links.add(link);
+            }
+        });
+        String msg = "";
+        for (String failed : failed_links) {
+            msg = failed + "\n";
+        }
+        assertTrue(failed_links.isEmpty(), msg);
+    }

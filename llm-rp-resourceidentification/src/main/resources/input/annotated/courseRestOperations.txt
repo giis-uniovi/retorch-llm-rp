@@ -1,55 +1,55 @@
-    @AccessMode(resID = "loginservice", concurrency = 10, sharing = true, accessMode = "READONLY")
-    @AccessMode(resID = "openvidumock", concurrency = 10, sharing = true, accessMode = "NOACCESS")
-    @AccessMode(resID = "configuration", concurrency = 1, accessMode = "READWRITE")
-    @AccessMode(resID = "executor", concurrency = 1, accessMode = "READWRITE")
-    @AccessMode(resID = "webbrowser", concurrency = 1, accessMode = "READWRITE")
-    @AccessMode(resID = "webserver", concurrency = 1, accessMode = "READWRITE")
-    @DisplayName("courseRestOperations")
-    @ParameterizedTest
-    @MethodSource("data")
-    void courseRestOperations(String mail, String password, String role ) throws ElementNotFoundException, NotLoggedException, InterruptedException {
-        loginAndCreateNewCourse(mail,password);
+@AccessMode(resID = "loginservice", concurrency = 10, sharing = true, accessMode = "READONLY")
+@AccessMode(resID = "openvidumock", concurrency = 10, sharing = true, accessMode = "NOACCESS")
+@AccessMode(resID = "configuration", concurrency = 1, accessMode = "READWRITE")
+@AccessMode(resID = "executor", concurrency = 1, accessMode = "READWRITE")
+@AccessMode(resID = "webbrowser", concurrency = 1, accessMode = "READWRITE")
+@AccessMode(resID = "webserver", concurrency = 1, accessMode = "READWRITE")
+@DisplayName("courseRestOperations")
+@ParameterizedTest
+@MethodSource("data")
+void courseRestOperations(String mail, String password, String role ) throws ElementNotFoundException, NotLoggedException, InterruptedException {
+    loginAndCreateNewCourse(mail,password);
 
-        editCourse();
+    editCourse();
 
-        CourseNavigationUtilities.deleteCourse(user.getDriver(), COURSE_NAME + EDITED); // Tear down
-    }
+    CourseNavigationUtilities.deleteCourse(user.getDriver(), COURSE_NAME + EDITED); // Tear down
+}
 
-    private void loginAndCreateNewCourse(String mail, String password) throws ElementNotFoundException, NotLoggedException, InterruptedException {
-        slowLogin(user, mail, password);
-        CourseNavigationUtilities.newCourse(user.getDriver(), COURSE_NAME);
-    }
+private void loginAndCreateNewCourse(String mail, String password) throws ElementNotFoundException, NotLoggedException, InterruptedException {
+    slowLogin(user, mail, password);
+    CourseNavigationUtilities.newCourse(user.getDriver(), COURSE_NAME);
+}
 
-    private void editCourse() {
-        log.info("Editing course");
-        String editedCourseName = COURSE_NAME + EDITED;
-        List<WebElement> editIcons = user.getDriver().findElements(By.className("course-put-icon"));
-        openDialog(editIcons.get(editIcons.size() - 1), user);
-        user.waitUntil(ExpectedConditions.elementToBeClickable(By.id("input-put-course-name")), "Input for course name not clickable");
-        WebElement courseNameInput = user.getDriver().findElement(By.id("input-put-course-name"));
-        courseNameInput.clear();
-        courseNameInput.sendKeys(editedCourseName);
-        user.getDriver().findElement(By.id("submit-put-course-btn")).click();
-        waitForDialogClosed("course-modal", "Edition of course failed", user);
-        user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("#course-list .course-list-item:last-child div.course-title span"), editedCourseName), "Unexpected course name");
-    }
-    private void enterCourseAndNavigateTab(String courseName, String tabId) { //16 lines
-        log.info("Entering course {}", courseName);
-        //All these tests always create a new course, so we wait for 3-courses in the main page (more than 2)
-        user.waitUntil(ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("#course-list .course-list-item div.course-title span"), 2), "The number of courses should be 3");
-        List<WebElement> allCourses = user.getDriver()
-                .findElements(By.cssSelector("#course-list .course-list-item div.course-title span"));
-        WebElement courseSpan = null;
-        for (WebElement c : allCourses) {
-            if (c.getText().equals(courseName)) {
-                courseSpan = c;
-                break;
-            }
+private void editCourse() {
+    log.info("Editing course");
+    String editedCourseName = COURSE_NAME + EDITED;
+    List<WebElement> editIcons = user.getDriver().findElements(By.className("course-put-icon"));
+    openDialog(editIcons.get(editIcons.size() - 1), user);
+    user.waitUntil(ExpectedConditions.elementToBeClickable(By.id("input-put-course-name")), "Input for course name not clickable");
+    WebElement courseNameInput = user.getDriver().findElement(By.id("input-put-course-name"));
+    courseNameInput.clear();
+    courseNameInput.sendKeys(editedCourseName);
+    user.getDriver().findElement(By.id("submit-put-course-btn")).click();
+    waitForDialogClosed("course-modal", "Edition of course failed", user);
+    user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("#course-list .course-list-item:last-child div.course-title span"), editedCourseName), "Unexpected course name");
+}
+private void enterCourseAndNavigateTab(String courseName, String tabId) { //16 lines
+    log.info("Entering course {}", courseName);
+    //All these tests always create a new course, so we wait for 3-courses in the main page (more than 2)
+    user.waitUntil(ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("#course-list .course-list-item div.course-title span"), 2), "The number of courses should be 3");
+    List<WebElement> allCourses = user.getDriver()
+            .findElements(By.cssSelector("#course-list .course-list-item div.course-title span"));
+    WebElement courseSpan = null;
+    for (WebElement c : allCourses) {
+        if (c.getText().equals(courseName)) {
+            courseSpan = c;
+            break;
         }
-
-        assertNotNull(courseSpan, "The course with the name '" + courseName + "' could not be found. Total courses available: " + allCourses.size());
-        courseSpan.click();
-        user.waitUntil(ExpectedConditions.textToBe(By.id("main-course-title"), courseName), "Unexpected course title");
-        log.info("Navigating to tab by clicking icon with id '{}'", tabId);
-        user.getDriver().findElement(By.id(tabId)).click();
     }
+
+    assertNotNull(courseSpan, "The course with the name '" + courseName + "' could not be found. Total courses available: " + allCourses.size());
+    courseSpan.click();
+    user.waitUntil(ExpectedConditions.textToBe(By.id("main-course-title"), courseName), "Unexpected course title");
+    log.info("Navigating to tab by clicking icon with id '{}'", tabId);
+    user.getDriver().findElement(By.id(tabId)).click();
+}

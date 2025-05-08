@@ -1,0 +1,32 @@
+    @AccessMode(resID = "loginservice", concurrency = 10, sharing = true, accessMode = "READONLY")
+    @AccessMode(resID = "openvidumock", concurrency = 10, sharing = true, accessMode = "NOACCESS")
+    @AccessMode(resID = "course", concurrency = 1, sharing = false, accessMode = "READWRITE")
+    @AccessMode(resID = "executor", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webbrowser", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webserver", concurrency = 1, accessMode = "READWRITE")
+    @ParameterizedTest
+    @MethodSource("data")
+    void teacherDeleteCourseTest(String mail, String password, String role) throws ElementNotFoundException, NotLoggedException, InterruptedException {//51+114+28 set up +13 lines teardown =206
+        this.slowLogin(user, mail, password);//24
+        String courseName = "Test Course_" + System.currentTimeMillis();
+        // navigate to course if not there
+        try {
+            NavigationUtilities.toCoursesHome(driver);//3lines
+        } catch (Exception e) {
+            fail("Failed to go to Courses " + e.getClass() + ": " + e.getLocalizedMessage());
+        }
+        // create a course
+        try {
+            log.info("Create a new \"Dummy Course\"");
+            Wait.waitForPageLoaded(driver);
+
+            CourseNavigationUtilities.newCourse(driver, courseName);//37 lines
+        } catch (ElementNotFoundException e) {
+            fail("Failed to create course:: " + e.getClass() + ": " + e.getLocalizedMessage());
+        }
+        List<WebElement> allCoursesPriorDeleting = user.getDriver().findElements(By.className("course-list-item"));
+        CourseNavigationUtilities.deleteCourse(user.getDriver(), courseName);
+        List<WebElement> allCourses = user.getDriver().findElements(By.className("course-list-item"));
+        assertEquals(allCoursesPriorDeleting.size() - 1, allCourses.size());
+        //Well done!
+    }

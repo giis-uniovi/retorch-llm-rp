@@ -1,0 +1,78 @@
+@AccessMode(resID = "loginservice", concurrency = 10, sharing = true, accessMode = "READONLY")
+@AccessMode(resID = "openvidumock", concurrency = 10, sharing = true, accessMode = "NOACCESS")
+@AccessMode(resID = "forum", concurrency = 1, sharing = false, accessMode = "READWRITE")
+@AccessMode(resID = "executor", concurrency = 1, accessMode = "READWRITE")
+@AccessMode(resID = "webbrowser", concurrency = 1, accessMode = "READWRITE")
+@AccessMode(resID = "webserver", concurrency = 1, accessMode = "READWRITE")
+@DisplayName("forumNewCommentTest")
+@ParameterizedTest
+@MethodSource("data")
+void forumNewCommentTest(String mail, String password, String role) throws NotLoggedException, ElementNotFoundException, InterruptedException {
+    this.slowLogin(user, mail, password);
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTimeInMillis(System.currentTimeMillis());
+    int mYear = calendar.get(Calendar.YEAR);
+    int mMonth = calendar.get(Calendar.MONTH);
+    int mDay = calendar.get(Calendar.DAY_OF_MONTH);
+    int mHour = calendar.get(Calendar.HOUR_OF_DAY);
+    int mMinute = calendar.get(Calendar.MINUTE);
+    int mSecond = calendar.get(Calendar.SECOND);
+
+        //check if one course have any entry for comment
+        NavigationUtilities.toCoursesHome(driver);//3lines
+
+        WebElement course = CourseNavigationUtilities.getCourseByName(driver, courseName);//14 lines
+        course.findElement(COURSE_LIST_COURSE_TITLE).click();
+        Wait.notTooMuch(driver).until(ExpectedConditions.visibilityOfElementLocated(By.id(TABS_DIV_ID)));
+        CourseNavigationUtilities.go2Tab(driver, FORUM_ICON);//4lines
+        assertTrue(ForumNavigationUtilities.isForumEnabled(CourseNavigationUtilities.getTabContent(driver, FORUM_ICON)), "Forum not activated");//6lines
+        List<String> entries_list = ForumNavigationUtilities.getFullEntryList(driver);//6lines
+        WebElement entry;
+        if (entries_list.isEmpty()) {//if not new entry
+            String newEntryTitle = "New Comment Test " + mDay + mMonth + mYear + mHour + mMinute + mSecond;
+            String newEntryContent = "This is the content written on the " + mDay + " of " + months[mMonth - 1] + ", " + mHour + ":" + mMinute + "," + mSecond;
+            ForumNavigationUtilities.newEntry(driver, newEntryTitle, newEntryContent);//16lines
+            entry = ForumNavigationUtilities.getEntry(driver, newEntryTitle);//16lines
+        } else {
+            entry = ForumNavigationUtilities.getEntry(driver, entries_list.get(0));//16lines
+        }
+        //go to entry
+        Click.element(driver, entry.findElement(FORUM_ENTRY_LIST_ENTRY_TITLE));
+        WebElement commentList = Wait.notTooMuch(driver).until(ExpectedConditions.visibilityOfElementLocated(FORUM_COMMENT_LIST));
+        //counting the number of numberComments
+        int numberCommentsOld = ForumNavigationUtilities.getComments(driver).size();
+        //new comment
+        WebElement newCommentIcon = commentList.findElement(FORUM_COMMENT_LIST_NEW_COMMENT_ICON);
+        Click.element(driver, newCommentIcon);
+        Wait.aLittle(driver).until(ExpectedConditions.visibilityOfElementLocated(FORUM_NEW_COMMENT_MODAL));
+        String newCommentContent = "COMMENT TEST" + mDay + mMonth + mYear + mHour + mMinute + mSecond + ". This is the comment written on the " + mDay + " of " + months[mMonth] + ", " + mHour + ":" + mMinute + "," + mSecond;
+        WebElement comment_field = driver.findElement(FORUM_NEW_COMMENT_MODAL_TEXT_FIELD);
+        comment_field.sendKeys(newCommentContent);
+        Click.element(driver, FORUM_NEW_COMMENT_MODAL_POST_BUTTON);
+
+        Wait.notTooMuch(driver).until(ExpectedConditions.visibilityOfElementLocated(FORUM_COMMENT_LIST));
+        //TO-DO think in other better way to solve this problem
+        Wait.waitForPageLoaded(driver);
+        user.waitUntil(ExpectedConditions.visibilityOfElementLocated(FORUM_COMMENT_LIST_COMMENT), "The comment list are not visible");
+        user.waitUntil((ExpectedCondition<Boolean>) driver -> {
+            int elementCount = ForumNavigationUtilities.getComments(driver).size();
+            return elementCount > numberCommentsOld;
+        }, "Comment not attached");
+        List<WebElement> comments = ForumNavigationUtilities.getComments(driver);
+        //asserts
+        assertTrue(comments.size() > numberCommentsOld, "Comment list empty or only original comment");
+
+        user.waitUntil(ExpectedConditions.visibilityOfElementLocated(FORUM_COMMENT_LIST_COMMENT), "The comment list are not visible");
+
+        boolean commentFound = false;
+        for (WebElement comment : comments) {
+            //check if it is new comment
+                String text = comment.findElement(FORUM_COMMENT_LIST_COMMENT_CONTENT).getText();
+                if (text.equals(newCommentContent)) {
+                    commentFound = true;
+                    assertEquals(comment.findElement(FORUM_COMMENT_LIST_COMMENT_USER).getText(), userName, "Bad user in comment");
+                }
+        }
+        assertTrue(commentFound, "Comment not found");
+
+}

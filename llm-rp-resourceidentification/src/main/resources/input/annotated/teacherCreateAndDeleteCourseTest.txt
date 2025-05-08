@@ -1,0 +1,28 @@
+    @AccessMode(resID = "loginservice", concurrency = 10, sharing = true, accessMode = "READONLY")
+    @AccessMode(resID = "openvidumock", concurrency = 10, sharing = true, accessMode = "NOACCESS")
+    @AccessMode(resID = "course", concurrency = 15, sharing = true, accessMode = "DYNAMIC")
+    @AccessMode(resID = "executor", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webbrowser", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webserver", concurrency = 1, accessMode = "READWRITE")
+    @ParameterizedTest
+    @MethodSource("data")
+    void teacherCreateAndDeleteCourseTest(String mail, String password, String role) throws ElementNotFoundException, NotLoggedException, InterruptedException {
+        // Setup
+        this.slowLogin(user, mail, password);
+
+        // Create a new course
+        String courseTitle = "Test Course_" + System.currentTimeMillis();
+        CourseNavigationUtilities.newCourse(user.getDriver(), courseTitle);
+        //TO-DO the problem its here
+        // Verify the course has been created
+        assertTrue(checkIfCourseExists(driver, courseTitle));
+
+        // Delete the course
+        CourseNavigationUtilities.deleteCourse(user.getDriver(), courseTitle);
+
+        // Verify the course has been deleted
+        assertFalse(checkIfCourseExists(driver, courseTitle));
+
+        // Teardown
+        user.getDriver().get(APP_URL);
+    }

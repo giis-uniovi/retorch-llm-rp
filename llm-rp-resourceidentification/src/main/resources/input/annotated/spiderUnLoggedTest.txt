@@ -1,0 +1,28 @@
+    @AccessMode(resID = "loginservice", concurrency = 10, sharing = true, accessMode = "READONLY")
+    @AccessMode(resID = "openvidumock", concurrency = 10, sharing = true, accessMode = "NOACCESS")
+    @AccessMode(resID = "course", concurrency = 15, sharing = true, accessMode = "READWRITE")
+    @AccessMode(resID = "executor", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webbrowser", concurrency = 1, accessMode = "READWRITE")
+    @AccessMode(resID = "webserver", concurrency = 1, accessMode = "READWRITE")
+    @ParameterizedTest
+    @MethodSource("data")
+    @DisplayName("spiderUnloggedTest")
+    void spiderUnloggedTest(String mail, String password, String role) { //125 lines + 28 set up +13 lines teardown = 166
+        userMail = "nonloged@gmail.com";
+        NavigationUtilities.getUrlAndWaitFooter(driver, HOST);
+        List<WebElement> pageLinks = SpiderNavigation.getPageLinks(driver); //29 lines
+        Map<String, String> explored = new HashMap<>();
+        log.info("Navigate the links...");
+        //Problem: once one is pressed the rest will be unusable as the page reloads...
+        explored = SpiderNavigation.exploreLinks(driver, pageLinks, explored, DEPTH); //49 lines
+        List<String> failed_links = new ArrayList<>();
+        explored.forEach((link, result) -> {
+            if (result.equals("KO")) failed_links.add(link);
+        });
+
+        String msg = "";
+        for (String failed : failed_links) {
+            msg = failed + "\n";
+        }
+        assertTrue(failed_links.isEmpty(), msg);
+    }

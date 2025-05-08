@@ -1,0 +1,17 @@
+@AccessMode(resID = "loginservice", concurrency = 10, sharing = true, accessMode = "READONLY")
+@AccessMode(resID = "openvidu", concurrency = 10, sharing = true, accessMode = "NOACCESS")
+@AccessMode(resID = "executor", concurrency = 1, accessMode = "READWRITE")
+@AccessMode(resID = "webbrowser", concurrency = 1, accessMode = "READWRITE")
+@AccessMode(resID = "webserver", concurrency = 1, accessMode = "READWRITE")
+@ParameterizedTest
+@MethodSource("data")
+@DisplayName("loginTest")
+void loginTest(String mail, String password, String role) throws NotLoggedException, ElementNotFoundException, BadUserException, InterruptedException { //22  +85 +28 set up +13 lines teardown  =148
+        this.slowLogin(user, mail, password); //24 lines
+        UserUtilities.checkLogin(driver, mail); //12 lines
+        assertTrue(true, "not logged");
+
+        this.logout(user); //14 lines
+        UserUtilities.checkLogOut(driver); //8lines
+        assertTrue(true);
+}

@@ -1,0 +1,57 @@
+@AccessMode(resID = "loginservice", concurrency = 10, sharing = true, accessMode = "READONLY")
+@AccessMode(resID = "openvidumock", concurrency = 10, sharing = true, accessMode = "NOACCESS")
+@AccessMode(resID = "forum", concurrency = 10, sharing = true, accessMode = "READONLY")
+@AccessMode(resID = "executor", concurrency = 1, accessMode = "READWRITE")
+@AccessMode(resID = "webbrowser", concurrency = 1, accessMode = "READWRITE")
+@AccessMode(resID = "webserver", concurrency = 1, accessMode = "READWRITE")
+@DisplayName("forumLoadEntriesTest")
+@ParameterizedTest
+@MethodSource("data")
+void forumLoadEntriesTest(String mail, String password, String role) throws NotLoggedException, ElementNotFoundException, InterruptedException {
+    this.slowLogin(user, mail, password);//24 lines
+        //navigate to courses.
+        NavigationUtilities.toCoursesHome(driver);//3lines
+        List<String> courses = CourseNavigationUtilities.getCoursesList(driver);//13lines
+        assertFalse(courses.isEmpty(), "No courses in the list");
+        //find course with forum activated
+        boolean activated_forum_on_some_test = false;
+        boolean has_comments = false;
+        for (String course_name : courses) {
+            //go to each of the courses
+            WebElement course = CourseNavigationUtilities.getCourseByName(driver, course_name);//14lines
+            course.findElement(COURSE_LIST_COURSE_TITLE).click();
+            Wait.notTooMuch(driver).until(ExpectedConditions.visibilityOfElementLocated(By.id(TABS_DIV_ID)));
+            log.info("Navigating to the forum and checking if its enabled");
+            //go to forum tab to check if enabled:
+            //load forum
+            CourseNavigationUtilities.go2Tab(driver, FORUM_ICON);//4lines
+            if (ForumNavigationUtilities.isForumEnabled(CourseNavigationUtilities.getTabContent(driver, FORUM_ICON))) {
+                activated_forum_on_some_test = true;
+                log.info("Loading the entries list");
+                //Load list of entries
+                List<String> entries_list = ForumNavigationUtilities.getFullEntryList(driver);//6lines
+                if (!entries_list.isEmpty()) {
+                    //Go into first entry
+                    for (String entry_name : entries_list) {
+                        log.info("Checking the entry with name: {}", entry_name);
+                        WebElement entry = ForumNavigationUtilities.getEntry(driver, entry_name);//16lines
+                        Click.element(driver, entry.findElement(FORUM_ENTRY_LIST_ENTRY_TITLE));
+                        //Load comments
+                        Wait.notTooMuch(driver).until(ExpectedConditions.visibilityOfElementLocated(FORUM_COMMENT_LIST));
+                        List<WebElement> comments = ForumNavigationUtilities.getComments(driver);
+                        log.info("Checking if the entry has comments");
+                        if (!comments.isEmpty()) {
+                            has_comments = true;
+                            log.info("Comments found, saving them");
+
+                            ForumNavigationUtilities.getUserComments(driver, userName);//8lines
+                        }//else go to next entry
+                        Click.element(driver, DOMManager.getParent(driver, driver.findElement(BACK_TO_ENTRIES_LIST_ICON)));
+                    }
+                }//(else) if no entries go to next course
+            }//(else) if forum no active go to next course
+            log.info("Returning to the main dashboard");
+            driver = Click.element(driver, BACK_TO_DASHBOARD);
+        }
+        assertTrue((activated_forum_on_some_test && has_comments), "There isn't any forum that can be used to test this [Or not activated or no entry lists or not comments]");
+}
