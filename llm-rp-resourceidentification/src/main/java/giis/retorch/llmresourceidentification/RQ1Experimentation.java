@@ -11,7 +11,7 @@ public class RQ1Experimentation {
     private static final Logger log = LoggerFactory.getLogger(RQ1Experimentation.class);
     private static final String OUT_BASE_PATH = "llm-rp-resourceidentification/target/prompts-input";
     static ExperimentationHelper exHelper;
-
+    private static final String RESOURCESROUTE = "llm-rp-resourceidentification/src/main/resources";
     public static void main(String[] args) throws IOException {
         exHelper = new ExperimentationHelper();
         List<String> testCasesList  = List.of(
@@ -42,7 +42,7 @@ public class RQ1Experimentation {
         String jsonResource = exHelper.loadFileIntoString("llm-rp-resourceidentification/src/main/resources/RETORCHFullTeachingResources.json");
 
         for (String testName:testCasesList) {
-            String testCase=exHelper.getTestCase(testName);
+            String testCase=exHelper.getTestCase(testName,false);
             String testExamples=exHelper.getTestExamples(testName);
 
             String prompt = promptIdentifyResourcesFewShotCoT(jsonResource, testExamples, testCase);
@@ -51,6 +51,15 @@ public class RQ1Experimentation {
             exHelper.sendChatGPTRequest(prompt, "o4-mini-2025-04-16", "RQ1-few-shot-cot-"+testName);
             log.debug("Request to GPT correctly donde");
         }
+
+        String gptResponse=exHelper.loadFileIntoString("llm-rp-resourceidentification/src/main/resources/outputs/example.txt");
+
+        String accessmodes= exHelper.getAccessModesAnnotationsFromAPIResponse(gptResponse);
+        String accessmodesbaseline= exHelper.getTestCaseAccessModeAnnotations("studentCourseMainTest");
+
+        System.out.println(accessmodes);
+
+
 
     }
 

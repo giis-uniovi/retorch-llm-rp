@@ -1,5 +1,8 @@
 package giis.retorch.llmresourceidentification;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -16,6 +19,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ExperimentationHelper {
 
@@ -51,9 +56,69 @@ public class ExperimentationHelper {
 
     }
 
-    public String getTestCase(String testMethodName) {
-        String filePath = "llm-rp-resourceidentification/src/main/resources/input/no-annotated/"+testMethodName+".txt";
+    public String getTestCase(String testMethodName,boolean annotated) {
+        String filePath = "";
+        if (annotated) {
+            filePath="llm-rp-resourceidentification/src/main/resources/input/annotated/"+testMethodName+".txt";
+        }
+        else{
+            filePath="llm-rp-resourceidentification/src/main/resources/input/no-annotated/"+testMethodName+".txt";
+        }
         return  loadFileIntoString(filePath);
+    }
+
+    public String getTestCaseAccessModeAnnotations(String testname ){
+
+        String filecontent=this.getTestCase(testname,true);
+        Pattern pattern = Pattern.compile("@AccessMode\\s*\\([^)]*\\)");
+        Matcher matcher = pattern.matcher(filecontent);
+
+        StringBuilder annotations = new StringBuilder();
+
+        while (matcher.find()) {
+            annotations.append(matcher.group()).append("\n");
+        }
+
+        return annotations.toString().trim();
+    }
+
+    public String getAccessModesAnnotationsFromAPIResponse(String code){
+        StringBuilder annotations = new StringBuilder();
+        try {
+            // Cargar el JSON desde un archivo o cadena
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(code);
+
+            // Navegar al nodo que contiene el "content"
+            JsonNode contentNode = root
+                    .path("choices")
+                    .get(0)
+                    .path("message")
+                    .path("content");
+
+            if (contentNode.isMissingNode()) {
+               log.error("No se encontró el contenido.");
+                return "";
+            }
+
+            String content = contentNode.asText();
+
+            // Expresión regular para extraer líneas que contienen @AccessMode(...)
+            Pattern pattern = Pattern.compile("@AccessMode\\(.*?\\)", Pattern.DOTALL);
+            Matcher matcher = pattern.matcher(content);
+
+            log.debug("Snippets encontrados:");
+            while (matcher.find()) {
+                log.debug(matcher.group());
+                annotations.append(matcher.group()).append("\n");
+            }
+
+        } catch (Exception e) {
+            log.error("Error leyendo el archivo: {}",e.getMessage());
+        }
+
+
+        return annotations.toString();
     }
 
     public void sendChatGPTRequest(String body, String model, String experimentname) throws IOException {
@@ -152,7 +217,7 @@ public class ExperimentationHelper {
     public  String loadFileIntoString(String path){
         String content="";
         try {
-            content = Files.readString(Paths.get(path));
+            content = FileUtils.readFileToString(new File(path), StandardCharsets.UTF_8).replace("\r\n", "\n");
         } catch (IOException e) {
             log.error("Error reading the file: {} " , e.getMessage());
         }
