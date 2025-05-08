@@ -1,0 +1,12 @@
+@ParameterizedTest
+@MethodSource("data")
+@DisplayName("loginTest")
+void loginTest(String mail, String password, String role) throws NotLoggedException, ElementNotFoundException, BadUserException, InterruptedException {
+    this.slowLogin(user, mail, password);
+    UserUtilities.checkLogin(driver, mail);
+    assertTrue(true, "not logged");
+
+    this.logout(user);
+    UserUtilities.checkLogOut(driver);
+    assertTrue(true);
+}

@@ -1,0 +1,17 @@
+@DisplayName("courseInfoRestOperations")
+@ParameterizedTest
+@MethodSource("data")
+void courseInfoRestOperations(String mail, String password, String role) throws ElementNotFoundException, NotLoggedException, InterruptedException {
+    loginAndCreateNewCourse(mail,password);
+    enterCourseAndNavigateTab(COURSE_NAME, "info-tab-icon");
+    user.waitUntil(ExpectedConditions.presenceOfNestedElementLocatedBy(By.cssSelector(".md-tab-body.md-tab-active"), By.cssSelector(".card-panel.warning")), "Course info wasn't empty");
+    log.info("Editing course information");
+
+    user.getDriver().findElement(By.id("edit-course-info")).click();
+    user.getDriver().findElement(By.className("ql-editor")).sendKeys(TEST_COURSE_INFO);
+    user.getDriver().findElement(By.id("send-info-btn")).click();
+
+    user.waitUntil(ExpectedConditions.textToBe(By.cssSelector(".ql-editor p"), TEST_COURSE_INFO), "Unexpected course info");
+    log.info("Course information successfully updated");
+    CourseNavigationUtilities.deleteCourse(user.getDriver(), COURSE_NAME);
+}

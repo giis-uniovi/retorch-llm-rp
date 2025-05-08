@@ -16,16 +16,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ExperimentationHelper {
 
     static final String PATH_KEY = "CHATGPT_API_KEY";
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    private final String RESOURCES_ROUTE = "llm-rp-resourceidentification/src/main/resources";
+    private static final String RESOURCESROUTE = "llm-rp-resourceidentification/src/main/resources";
 
     public ExperimentationHelper() {
         //This is the default constructor to avoid smells
@@ -33,8 +30,7 @@ public class ExperimentationHelper {
 
     public String getTestExamples(String testMethodName){
 
-        List<String> listExamples = List.of("oneToOneChatInSessionChrome","oneToOneVideoAudioSessionChrome","forumRestOperations");
-
+        LinkedList<String> listExamples = new LinkedList<>(List.of("oneToOneChatInSessionChrome", "oneToOneVideoAudioSessionChrome", "forumRestOperations"));
         if (listExamples.contains(testMethodName)){
             listExamples.remove(testMethodName);
             listExamples.add("forumRestOperations");
@@ -58,9 +54,7 @@ public class ExperimentationHelper {
 
     public String getTestCase(String testMethodName) {
         String filePath = "llm-rp-resourceidentification/src/main/resources/input/no-annotated/"+testMethodName+".txt";
-
-        String testCase= loadFileIntoString(filePath);
-        return testCase;
+        return  loadFileIntoString(filePath);
     }
     public void sendChatGPTRequest(String body, String model, String experimentname) throws IOException {
 
@@ -127,7 +121,7 @@ public class ExperimentationHelper {
                 // Format the current date and time
                 String formattedDateTime = now.format(formatter);
 
-                putOutputToFile(RESOURCES_ROUTE + "/outputs", experimentname + "-" + model + "-" + formattedDateTime, responseBody);
+                putOutputToFile(RESOURCESROUTE + "/outputs", experimentname + "-" + model + "-" + formattedDateTime, responseBody);
                 conn.disconnect();
             }
 
@@ -193,7 +187,7 @@ public class ExperimentationHelper {
     }
 
     public String getTestCasesCrossValidation(int pos) throws IOException {
-        String[] rawTestCases = openFileLoadContent(RESOURCES_ROUTE+"/input/inputSystemTestCases.txt").split("//TC");
+        String[] rawTestCases = openFileLoadContent(RESOURCESROUTE +"/input/inputSystemTestCases.txt").split("//TC");
         List<String> contentList = new ArrayList<>(Arrays.asList(rawTestCases));
         contentList.remove(pos);
 
@@ -208,15 +202,15 @@ public class ExperimentationHelper {
     }
 
     public String getTestScenarios() throws IOException {
-        return openFileLoadContent(RESOURCES_ROUTE + "/input/inputTestScenarios.txt");
+        return openFileLoadContent(RESOURCESROUTE + "/input/inputTestScenarios.txt");
     }
 
     public String getUserRequirements() throws IOException {
-        return openFileLoadContent(RESOURCES_ROUTE + "/input/inputUserRequirements_en.txt");
+        return openFileLoadContent(RESOURCESROUTE + "/input/inputUserRequirements_en.txt");
     }
 
     public String getTestScenarioExample() throws IOException {
-        return openFileLoadContent(RESOURCES_ROUTE + "/input/inputTestScenarioExample.txt");
+        return openFileLoadContent(RESOURCESROUTE + "/input/inputTestScenarioExample.txt");
     }
 
 }

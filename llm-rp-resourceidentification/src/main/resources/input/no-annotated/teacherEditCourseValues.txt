@@ -1,0 +1,157 @@
+@ParameterizedTest
+@MethodSource("data")
+void teacherEditCourseValues(String mail, String password, String role) throws NotLoggedException, ElementNotFoundException, InterruptedException {
+    String courseName = properties.getProperty("forum.test.course");
+    this.slowLogin(user, mail, password);
+    try {
+        // navigate to course if not there
+        NavigationUtilities.toCoursesHome(driver);
+    } catch (Exception e) {
+        fail("Failed to go to Courses " + e.getClass() + ": " + e.getLocalizedMessage());
+    }
+    // select first course (never mind which course -while application is in a test environment-)
+    // for more general testing use NavigationUtilities.newCourse, but it will need some code rewriting.
+    //Modify name
+
+    try {
+        WebElement course = CourseNavigationUtilities.getCourseByName(driver, courseName);
+        String old_name = course.findElement(By.className("title")).getText();
+
+        String edition_name = "EDITION TEST_" + System.currentTimeMillis();
+        log.info("Modifying Course name from {} to {}", old_name, edition_name);
+        driver = CourseNavigationUtilities.changeCourseName(driver, old_name, edition_name);
+        //check if course exists
+        log.info("Checking if course exists");
+        assertTrue(checkIfCourseExists(driver, edition_name, 3), "The course title hasn't been found in the list ¿Have been created?");
+        //return to old name
+        log.info("Rolling back to old name");
+        driver = CourseNavigationUtilities.changeCourseName(driver, edition_name, old_name);
+        assertTrue(checkIfCourseExists(driver, old_name, 3), "The course title hasn't been reset");
+    } catch (Exception e) {
+        fail("Failed to edit course name " + e.getClass() + ": " + e.getLocalizedMessage());
+    }
+    //Go to details and edit them
+    try {//*[@id="sticky-footer-div"]/com.fullteaching.e2e.no_elastest.main/app-dashboard/div/div[3]/div/div[1]/ul/li[1]/div/div[2]
+        log.info("Going to details and edit them");
+        WebElement course = CourseNavigationUtilities.getCourseByName(driver, courseName);
+        course.findElement(COURSE_LIST_COURSE_TITLE).click();
+        Wait.notTooMuch(driver).until(ExpectedConditions.visibilityOfElementLocated(By.id(TABS_DIV_ID)));
+    } catch (Exception e) {
+        fail("Failed to load Courses Tabs " + e.getClass() + ": " + e.getLocalizedMessage());
+    }
+    // Modify description TAB HOME
+    try {
+        log.info("Modifying the description of TAB HOME");
+        CourseNavigationUtilities.go2Tab(driver, HOME_ICON);
+        //Modify the description
+        WebElement edit_description_button = driver.findElement(EDIT_DESCRIPTION_BUTTON);
+        Click.element(driver, edit_description_button);
+        //wait for editor md editor???'
+        WebElement edit_description_desc = Wait.notTooMuch(driver).until(ExpectedConditions.visibilityOfElementLocated(By.className(EDIT_DESCRIPTION_CONTENT_BOX_CLASS)));
+        //text here?? /html/body/app/div/com.fullteaching.e2e.no_elastest.main/app-course-details/div/div[4]/md-tab-group/div[2]/div[1]/div/div[2]/p-editor/div/div[2]/div[1]
+        edit_description_desc.getAttribute("ng-reflect-model");
+        //delete old_desc
+        log.info("Deleting old description");
+        WebElement editor = driver.findElement(By.className("ql-editor"));
+        editor.sendKeys(SELECT_ALL);
+        editor.sendKeys(DELETE);
+        //New Title
+        log.info("Adding the new description");
+        WebElement headerSelector = driver.findElement(By.className("ql-header"));
+        Click.element(driver, headerSelector);
+        WebElement picker_options = Wait.notTooMuch(driver).until(ExpectedConditions.visibilityOfElementLocated(By.className("ql-picker-options")));
+        WebElement option = NavigationUtilities.getOption(picker_options.findElements(By.className("ql-picker-item")), "Heading", NavigationUtilities.FindOption.ATTRIBUTE, "data-label");
+        assertNotNull(option, "Something went wrong while setting the Heading");
+        Click.element(driver, option);
+        JavascriptExecutor jse = (JavascriptExecutor) driver;
+        log.info("Writing the new titles: New Title, New SubHeading and This is the normal content");
+        //Write the new Title.
+        editor = driver.findElement(By.className("ql-editor"));
+        jse.executeScript("arguments[0].innerHTML = '<h1>New Title</h1><h2>New SubHeading</h2><p>This is the normal content</p>'", editor);
+        driver.findElement(By.xpath("//*[@id=\"textEditorRowButtons\"]/a[2]")).click();
+        user.waitUntil(ExpectedConditions.visibilityOfElementLocated(By.className("ql-editor-custom")), "Element that was waiting doesn't found");
+        WebElement preview = Wait.notTooMuch(driver).until(ExpectedConditions.visibilityOfElementLocated(By.className("ql-editor-custom")));
+        //check heading TO-DO : Error here, the type of font is not saved
+        assertEquals("New Title", preview.findElement(By.tagName("h1")).getText(), "Heading preview not properly rendered");
+        //check subtitle
+        assertEquals("New SubHeading", preview.findElement(By.tagName("h2")).getText(), "Subheading preview not properly rendered");
+        //check content
+        assertEquals("This is the normal content", preview.findElement(By.tagName("p")).getText(), "Normal preview content not properly rendered");
+        //save send-info-btn
+        log.info("Checked all the content, click the save button");
+        driver.findElement(EDIT_DESCRIPTION_SAVE_BUTTON).click();
+        WebElement saved = Wait.notTooMuch(driver).until(ExpectedConditions.visibilityOfElementLocated(By.className("ql-editor-custom")));
+        //check heading
+        assertEquals("New Title", saved.findElement(By.tagName("h1")).getText(), "Heading saved not properly rendered");
+        //check subtitle
+        assertEquals("New SubHeading", saved.findElement(By.tagName("h2")).getText(), "Subheading saved not properly rendered");
+        //check content
+        assertEquals("This is the normal content", saved.findElement(By.tagName("p")).getText(), "Normal content saved not properly rendered");
+        log.info("Checking after saving that all content its correct");
+    } catch (Exception e) {
+        fail("Failed to modify description:: (File:CourseTeacherTest.java - line:" + ExceptionsHelper.getFileLineInfo(e.getStackTrace(), "CourseTeacherTest.java") + ") "
+                + e.getClass() + ": " + e.getLocalizedMessage());
+    }
+    // in sessions program
+    try {
+        CourseNavigationUtilities.go2Tab(driver, SESSION_ICON);
+        // new session ¡in session Tests!
+        // delete session ¡in session Tests!
+    } catch (Exception e) {
+        fail("Failed to test session:: (File:CourseTeacherTest.java - line:" + ExceptionsHelper.getFileLineInfo(e.getStackTrace(), "CourseTeacherTest.java") + ") "
+                + e.getClass() + ": " + e.getLocalizedMessage());
+    }
+    // in forum enable/disable
+    try {
+        log.info("Navigating to Forum");
+        CourseNavigationUtilities.go2Tab(driver, FORUM_ICON);
+        WebElement forum_tab_content = CourseNavigationUtilities.getTabContent(driver, FORUM_ICON);
+        //check if Forum is enabled
+
+        if (ForumNavigationUtilities.isForumEnabled(forum_tab_content)) {
+            //check entries ¡Only check if there is entries and all the buttons are present!
+            log.info("Forum enabled checking that the entries and buttons are present");
+            assertNotNull(forum_tab_content.findElement(FORUM_NEW_ENTRY_ICON), "Add Entry not found");
+            assertNotNull(forum_tab_content.findElement(FORUM_EDIT_ENTRY_ICON), "Add Entry not found");
+            //disable
+            ForumNavigationUtilities.disableForum(driver);
+            //enable
+            //click edit
+            ForumNavigationUtilities.enableForum(driver);
+        } else {
+            //else
+            //enable
+            log.info("Forum disabled, enable it and check that the entries and buttons are present");
+            ForumNavigationUtilities.enableForum(driver);
+            //check entries  ¡Only check if there is entries and all the buttons are present!
+            assertNotNull(forum_tab_content.findElement(FORUM_NEW_ENTRY_ICON), "Add Entry not found");
+            assertNotNull(forum_tab_content.findElement(FORUM_EDIT_ENTRY_ICON), "Add Entry not found");
+            //disable
+            ForumNavigationUtilities.disableForum(driver);
+        }
+    } catch (Exception e) {
+        fail("Failed to tests forum:: (File:CourseTeacherTest.java - line:" + ExceptionsHelper.getFileLineInfo(e.getStackTrace(), "CourseTeacherTest.java") + ") "
+                + e.getClass() + ": " + e.getLocalizedMessage());
+    }
+    // in attenders
+    try {
+        log.info("Checking attenders tab");
+        Wait.notTooMuch(driver).until(ExpectedConditions.visibilityOfElementLocated(ATTENDERS_ICON));
+        CourseNavigationUtilities.go2Tab(driver, ATTENDERS_ICON);
+        CourseNavigationUtilities.getTabContent(driver, ATTENDERS_ICON);
+        log.info("Checking if the user is in attenders");
+        //is user in attenders?
+        assertTrue(CourseNavigationUtilities.isUserInAttendersList(driver, userName), "User isn't in the attenders list");
+        //is user highlighted?
+        log.info("Checking if the user is highlighted");
+        String main_user = CourseNavigationUtilities.getHighlightedAttender(driver);
+        assertEquals(userName, main_user, "Main user and active user doesn't match");
+    } catch (Exception e) {
+        fail("Failed to tests attenders:: (File: CourseTeacherTest.java -line: " + ExceptionsHelper.getFileLineInfo(e.getStackTrace(), "CourseTeacherTest.java") + ") "
+                + e.getClass() + ": " + e.getLocalizedMessage());
+    }
+    //Currently, at the en of this test the header it's not loaded... This reloads the page and shows the header
+
+    Wait.notTooMuch(driver).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#arrow-drop-down")));
+    //Well done!
+}

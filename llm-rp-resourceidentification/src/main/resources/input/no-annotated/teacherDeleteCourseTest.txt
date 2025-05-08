@@ -1,0 +1,26 @@
+@ParameterizedTest
+@MethodSource("data")
+void teacherDeleteCourseTest(String mail, String password, String role) throws ElementNotFoundException, NotLoggedException, InterruptedException {
+    this.slowLogin(user, mail, password);//24
+    String courseName = "Test Course_" + System.currentTimeMillis();
+    // navigate to course if not there
+    try {
+        NavigationUtilities.toCoursesHome(driver);
+    } catch (Exception e) {
+        fail("Failed to go to Courses " + e.getClass() + ": " + e.getLocalizedMessage());
+    }
+    // create a course
+    try {
+        log.info("Create a new \"Dummy Course\"");
+        Wait.waitForPageLoaded(driver);
+
+        CourseNavigationUtilities.newCourse(driver, courseName);
+    } catch (ElementNotFoundException e) {
+        fail("Failed to create course:: " + e.getClass() + ": " + e.getLocalizedMessage());
+    }
+    List<WebElement> allCoursesPriorDeleting = user.getDriver().findElements(By.className("course-list-item"));
+    CourseNavigationUtilities.deleteCourse(user.getDriver(), courseName);
+    List<WebElement> allCourses = user.getDriver().findElements(By.className("course-list-item"));
+    assertEquals(allCoursesPriorDeleting.size() - 1, allCourses.size());
+    //Well done!
+}
