@@ -9,31 +9,31 @@
 @MethodSource("data")
 void filesRestOperations(String mail, String password, String role) throws ElementNotFoundException, NotLoggedException, InterruptedException {
     loginAndCreateNewCourse(mail,password);
-    enterCourseAndNavigateTab(COURSE_NAME, "files-tab-icon");//16 lines
+    enterCourseAndNavigateTab(COURSE_NAME, "files-tab-icon");
     log.info("Checking that there are no files in the course");
     user.waitUntil(ExpectedConditions.elementToBeClickable(By.cssSelector("app-error-message .card-panel.warning")),
             "Warning card (course with no files) missing");
     log.info("Adding new file group");
-    openDialog("#add-files-icon", user);//8lines
+    openDialog("#add-files-icon", user);
     String fileGroup = "TEST FILE GROUP";
     // Find form elements
     WebElement titleField = user.getDriver().findElement(By.id("input-post-title"));
     titleField.sendKeys(fileGroup);
     user.getDriver().findElement(By.id("post-modal-btn")).click();
-    waitForDialogClosed("course-details-modal", "Addition of file group failed", user);//14 lines
+    waitForDialogClosed("course-details-modal", "Addition of file group failed", user);
     // Check fields of new file group
     user.waitUntil(ExpectedConditions.textToBe(By.cssSelector(".file-group-title h5"), fileGroup),
             "Unexpected file group name");
     log.info("File group successfully added");
     // Edit file group
     log.info("Editing file group");
-    openDialog("#edit-filegroup-icon", user);//8lines
+    openDialog("#edit-filegroup-icon", user);
     // Find form elements
     titleField = user.getDriver().findElement(By.id("input-file-title"));
     titleField.clear();
     titleField.sendKeys(fileGroup + EDITED);
     user.getDriver().findElement(By.id("put-modal-btn")).click();
-    waitForDialogClosed("put-delete-modal", "Edition of file group failed", user);//14 lines
+    waitForDialogClosed("put-delete-modal", "Edition of file group failed", user);
     // Check fields of edited file group
     user.waitUntil(
             ExpectedConditions.textToBe(By.cssSelector("app-file-group .file-group-title h5"), fileGroup + EDITED),
@@ -42,17 +42,17 @@ void filesRestOperations(String mail, String password, String role) throws Eleme
     // Add file subgroup
     log.info("Adding new file sub-group");
     String fileSubGroup = "TEST FILE SUBGROUP";
-    openDialog(".add-subgroup-btn", user);//8lines
+    openDialog(".add-subgroup-btn", user);
     titleField = user.getDriver().findElement(By.id("input-post-title"));
     titleField.sendKeys(fileSubGroup);
     user.getDriver().findElement(By.id("post-modal-btn")).click();
-    waitForDialogClosed("course-details-modal", "Addition of file sub-group failed", user);//14 lines
+    waitForDialogClosed("course-details-modal", "Addition of file sub-group failed", user);
     // Check fields of new file subgroup
     user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("app-file-group app-file-group .file-group-title h5"),
             fileSubGroup), "Unexpected file sub-group name");
     log.info("File sub-group successfully added");
     log.info("Adding new file to sub-group");
-    openDialog("app-file-group app-file-group .add-file-btn", user);//8lines
+    openDialog("app-file-group app-file-group .add-file-btn", user);
     WebElement fileUploader = user.getDriver().findElement(By.className("input-file-uploader"));
     String fileName = "testFile.txt";
     log.info("Uploading file located on path '{}'",
@@ -74,20 +74,20 @@ void filesRestOperations(String mail, String password, String role) throws Eleme
     log.info("File upload successful");
     // Close dialog
     user.getDriver().findElement(By.id("close-upload-modal-btn")).click();
-    waitForDialogClosed("course-details-modal", "Upload of file failed", user);//14 lines
+    waitForDialogClosed("course-details-modal", "Upload of file failed", user);
     // Check new uploaded file
     user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("app-file-group app-file-group .chip .file-name-div"),
             fileName), "Unexpected uploaded file name");
     log.info("File successfully added");
     // Edit file
     log.info("Editing file");
-    openDialog("app-file-group app-file-group .edit-file-name-icon", user);//8lines
+    openDialog("app-file-group app-file-group .edit-file-name-icon", user);
     titleField = user.getDriver().findElement(By.id("input-file-title"));
     titleField.clear();
     String editedFileName = "testFileEDITED.txt";
     titleField.sendKeys(editedFileName);
     user.getDriver().findElement(By.id("put-modal-btn")).click();
-    waitForDialogClosed("put-delete-modal", "Edition of file failed", user);//14 lines
+    waitForDialogClosed("put-delete-modal", "Edition of file failed", user);
     // Check edited file name
     user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("app-file-group app-file-group .chip .file-name-div"),
             editedFileName), "Unexpected uploaded file name");
@@ -100,7 +100,7 @@ void filesRestOperations(String mail, String password, String role) throws Eleme
     log.info("File group successfully deleted");
     CourseNavigationUtilities.deleteCourse(user.getDriver(), COURSE_NAME);
 }
-    private void enterCourseAndNavigateTab(String courseName, String tabId) { //16 lines
+    private void enterCourseAndNavigateTab(String courseName, String tabId) {
         log.info("Entering course {}", courseName);
         //All these tests always create a new course, so we wait for 3-courses in the main page (more than 2)
         user.waitUntil(ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("#course-list .course-list-item div.course-title span"), 2), "The number of courses should be 3");

@@ -7,11 +7,11 @@
 @DisplayName("forumRestOperations")
 @ParameterizedTest
 @MethodSource("data")
-void forumRestOperations(String mail, String password, String role) throws ElementNotFoundException, NotLoggedException, InterruptedException { //60+66+65 set up +60 lines teardown =251
+void forumRestOperations(String mail, String password, String role) throws ElementNotFoundException, NotLoggedException, InterruptedException {
     loginAndCreateNewCourse(mail,password);
-    enterCourseAndNavigateTab(COURSE_NAME, "forum-tab-icon");//16 lines
+    enterCourseAndNavigateTab(COURSE_NAME, "forum-tab-icon");
     log.info("Adding new entry to the forum");
-    openDialog("#add-entry-icon", user);//8lines
+    openDialog("#add-entry-icon", user);
     // Find form elements
     WebElement titleField = user.getDriver().findElement(By.id("input-post-title"));
     WebElement commentField = user.getDriver().findElement(By.id("input-post-comment"));
@@ -22,7 +22,7 @@ void forumRestOperations(String mail, String password, String role) throws Eleme
     titleField.sendKeys(title);
     commentField.sendKeys(comment);
     user.getDriver().findElement(By.id("post-modal-btn")).click();
-    waitForDialogClosed("course-details-modal", "Addition of entry failed", user);////14 lines
+    waitForDialogClosed("course-details-modal", "Addition of entry failed", user);
     // Check fields of new entry
     WebElement entryEl = user.getDriver().findElement(By.cssSelector("li.entry-title"));
     user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("li.entry-title .forum-entry-title"), title),
@@ -43,11 +43,11 @@ void forumRestOperations(String mail, String password, String role) throws Eleme
     // Comment reply
     log.info("Adding new replay to the entry's only comment");
     String reply = "TEST FORUM REPLY";
-    openDialog(".replay-icon", user);//8lines
+    openDialog(".replay-icon", user);
     commentField = user.getDriver().findElement(By.id("input-post-comment"));
     commentField.sendKeys(reply);
     user.getDriver().findElement(By.id("post-modal-btn")).click();
-    waitForDialogClosed("course-details-modal", "Addition of entry reply failed", user);//14 lines
+    waitForDialogClosed("course-details-modal", "Addition of entry reply failed", user);
     user.waitUntil(ExpectedConditions.textToBe(By.cssSelector(
                     ".comment-block > app-comment:first-child > div.comment-div div.comment-div .message-itself"),
             reply), "Unexpected reply message in the entry details view");
@@ -58,21 +58,21 @@ void forumRestOperations(String mail, String password, String role) throws Eleme
     // Forum deactivation
     user.getDriver().findElement(By.id("entries-sml-btn")).click();
     log.info("Deactivating forum");
-    openDialog("#edit-forum-icon", user);//8lines
+    openDialog("#edit-forum-icon", user);
     user.waitUntil(ExpectedConditions.elementToBeClickable(By.id(("label-forum-checkbox"))),
             "Checkbox for forum deactivation not clickable");
     user.getDriver().findElement(By.id("label-forum-checkbox")).click();
     user.waitUntil(ExpectedConditions.elementToBeClickable(By.id(("put-modal-btn"))),
             "Button for forum deactivation not clickable");
     user.getDriver().findElement(By.id("put-modal-btn")).click();
-    waitForDialogClosed("put-delete-modal", "Deactivation of forum failed", user);//14 lines
+    waitForDialogClosed("put-delete-modal", "Deactivation of forum failed", user);
     user.waitUntil(ExpectedConditions.elementToBeClickable(By.cssSelector("app-error-message .card-panel.warning")),
             "Warning card (forum deactivated) missing");
     log.info("Forum successfully deactivated");
     CourseNavigationUtilities.deleteCourse(user.getDriver(), COURSE_NAME);
 }
 
-private void enterCourseAndNavigateTab(String courseName, String tabId) { //16 lines
+private void enterCourseAndNavigateTab(String courseName, String tabId) {
     log.info("Entering course {}", courseName);
     //All these tests always create a new course, so we wait for 3-courses in the main page (more than 2)
     user.waitUntil(ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("#course-list .course-list-item div.course-title span"), 2), "The number of courses should be 3");

@@ -9,7 +9,7 @@
 @MethodSource("data")
 void courseInfoRestOperations(String mail, String password, String role) throws ElementNotFoundException, NotLoggedException, InterruptedException {
     loginAndCreateNewCourse(mail,password);
-    enterCourseAndNavigateTab(COURSE_NAME, "info-tab-icon");//16 lines
+    enterCourseAndNavigateTab(COURSE_NAME, "info-tab-icon");
     user.waitUntil(ExpectedConditions.presenceOfNestedElementLocatedBy(By.cssSelector(".md-tab-body.md-tab-active"), By.cssSelector(".card-panel.warning")), "Course info wasn't empty");
     log.info("Editing course information");
 

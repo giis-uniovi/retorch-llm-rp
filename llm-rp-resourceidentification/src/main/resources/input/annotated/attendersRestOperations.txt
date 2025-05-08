@@ -9,7 +9,7 @@
 @MethodSource("data")
 void attendersRestOperations(String mail, String password, String role) throws ElementNotFoundException, NotLoggedException, InterruptedException {
     loginAndCreateNewCourse(mail,password);
-    enterCourseAndNavigateTab(COURSE_NAME, "attenders-tab-icon");//16 lines
+    enterCourseAndNavigateTab(COURSE_NAME, "attenders-tab-icon");
     log.info("Checking that there is only one attender to the course");
     user.waitUntil(ExpectedConditions.numberOfElementsToBe(By.className("attender-row-div"), 1),
             "Unexpected number of attenders for the course");
@@ -17,12 +17,12 @@ void attendersRestOperations(String mail, String password, String role) throws E
             "Unexpected name for the attender");
     // Add attender fail
     log.info("Adding attender (should FAIL)");
-    openDialog("#add-attenders-icon", user);//8lines
+    openDialog("#add-attenders-icon", user);
     String attenderName = "studentFail@gmail.com";
     WebElement titleField = user.getDriver().findElement(By.id("input-attender-simple"));
     titleField.sendKeys(attenderName);
     user.getDriver().findElement(By.id("put-modal-btn")).click();
-    waitForDialogClosed("put-delete-modal", "Addition of attender fail", user);//14 lines
+    waitForDialogClosed("put-delete-modal", "Addition of attender fail", user);
     user.waitUntil(ExpectedConditions.elementToBeClickable(By.cssSelector("app-error-message .card-panel.fail")),
             "Error card (attender not added to the course) missing");
     user.waitUntil(ExpectedConditions.numberOfElementsToBe(By.className("attender-row-div"), 1),
@@ -31,12 +31,12 @@ void attendersRestOperations(String mail, String password, String role) throws E
     log.info("Attender addition successfully failed");
     // Add attender success
     log.info("Adding attender (should SUCCESS)");
-    openDialog("#add-attenders-icon", user);//8lines
+    openDialog("#add-attenders-icon", user);
     attenderName = "student1@gmail.com";
     titleField = user.getDriver().findElement(By.id("input-attender-simple"));
     titleField.sendKeys(attenderName);
     user.getDriver().findElement(By.id("put-modal-btn")).click();
-    waitForDialogClosed("put-delete-modal", "Addition of attender failed", user);//14 lines
+    waitForDialogClosed("put-delete-modal", "Addition of attender failed", user);
     user.waitUntil(ExpectedConditions.elementToBeClickable(By.cssSelector("app-error-message .card-panel.correct")),
             "Success card (attender properly added to the course) missing");
     user.waitUntil(ExpectedConditions.numberOfElementsToBe(By.className("attender-row-div"), 2),
@@ -57,7 +57,7 @@ void attendersRestOperations(String mail, String password, String role) throws E
 
 /*** Auxiliary methods ***/
 
-private void enterCourseAndNavigateTab(String courseName, String tabId) { //16 lines
+private void enterCourseAndNavigateTab(String courseName, String tabId) {
     log.info("Entering course {}", courseName);
     //All these tests always create a new course, so we wait for 3-courses in the main page (more than 2)
     user.waitUntil(ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("#course-list .course-list-item div.course-title span"), 2), "The number of courses should be 3");

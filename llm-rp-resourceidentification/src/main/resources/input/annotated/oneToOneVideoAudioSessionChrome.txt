@@ -37,9 +37,9 @@ void oneToOneVideoAudioSessionChrome(String mail, String password, String role) 
     checkVideoPlaying(user,
             user.getDriver()
                     .findElement(By.cssSelector(("div.participant video"))),
-            "div.participant"); //30 lines
+            "div.participant");
     // STUDENT
-    student = setupBrowser(STUDENT_BROWSER, TJOB_NAME + "-" +TEST_NAME, "STUDENT",5);//27 lines
+    student = setupBrowser(STUDENT_BROWSER, TJOB_NAME + "-" +TEST_NAME, "STUDENT",5);
 
     slowLogin(student, studentMail, studentPass);
 
@@ -66,14 +66,13 @@ void oneToOneVideoAudioSessionChrome(String mail, String password, String role) 
     checkVideoPlaying(student,
             student.getDriver()
                     .findElement(By.cssSelector(("div.participant video"))),
-            "div.participant");//30 lines
+            "div.participant");
     // Student asks for intervention
     student.getWaiter().until(ExpectedConditions.elementToBeClickable(By
             .xpath("//div[@id='div-header-buttons']//i[text() = 'record_voice_over']")));
     log.info("{} asking for intervention", student.getClientData());
     student.getDriver().findElement(By.xpath(
-                    "//div[@id='div-header-buttons']//i[text() = 'record_voice_over']"))
-            .click();
+                    "//div[@id='div-header-buttons']//i[text() = 'record_voice_over']")).click();
 
     // Teacher accepts intervention
     user.getWaiter().until(ExpectedConditions.elementToBeClickable(
@@ -89,19 +88,19 @@ void oneToOneVideoAudioSessionChrome(String mail, String password, String role) 
     checkVideoPlaying(student,
             student.getDriver().findElement(
                     By.cssSelector(("div.participant-small video"))),
-            "div.participant-small");//30 lines
+            "div.participant-small");
     // Main video of student
     checkVideoPlaying(student,
             student.getDriver()
                     .findElement(By.cssSelector(("div.participant video"))),
-            "div.participant");//30 lines
+            "div.participant");
     user.getWaiter().until(ExpectedConditions.presenceOfElementLocated(
             By.cssSelector(("div.participant-small video"))));
     // Small video of teacher
     checkVideoPlaying(user,
             user.getDriver().findElement(
                     By.cssSelector(("div.participant-small video"))),
-            "div.participant-small");//30 lines
+            "div.participant-small");
     // Main video of teacher
     checkVideoPlaying(user,
             user.getDriver()

@@ -30,9 +30,9 @@ void oneToOneChatInSessionChrome(String mail, String password, String role ) thr
     // Check connected message
     user.getDriver().findElement(By.cssSelector("#fixed-icon")).click();
 
-    checkSystemMessage("Connected", user, 100); // 6 lines
+    checkSystemMessage("Connected", user, 100);
     // STUDENT
-    student = setupBrowser(STUDENT_BROWSER, TJOB_NAME + "-" +"oneToOneChatInSessionChrome", "STUDENT",5);//27 lines
+    student = setupBrowser(STUDENT_BROWSER, TJOB_NAME + "-" +"oneToOneChatInSessionChrome", "STUDENT",5);
 
     this.slowLogin(student, studentMail, studentPass);
 
@@ -46,11 +46,11 @@ void oneToOneChatInSessionChrome(String mail, String password, String role ) thr
     student.getDriver().findElement(By.cssSelector("ul div:first-child li.session-data div.session-ready")).click();
     student.getDriver().findElement(By.cssSelector("#fixed-icon")).click();
 
-    checkSystemMessage("Connected", student, 0); //6 lines
+    checkSystemMessage("Connected", student, 0);
 
 
-    checkSystemMessage(STUDENT_NAME + " has connected", user, 100); //6 lines
-    checkSystemMessage(TEACHER_NAME + " has connected", student, 100);//6lines
+    checkSystemMessage(STUDENT_NAME + " has connected", user, 100);
+    checkSystemMessage(TEACHER_NAME + " has connected", student, 100);
     // Test chat
 
     String teacherMessage = "TEACHER CHAT MESSAGE";
@@ -61,18 +61,18 @@ void oneToOneChatInSessionChrome(String mail, String password, String role ) thr
     user.getWaiter().until(ExpectedConditions.elementToBeClickable(By.id("send-btn")));
     user.getDriver().findElement(By.id("send-btn")).click();
 
-    checkOwnMessage(teacherMessage, TEACHER_NAME, user, numberpriormessages);//7 lines
-    checkStrangerMessage(teacherMessage, TEACHER_NAME, student, numberpriormessages); //8lines
+    checkOwnMessage(teacherMessage, TEACHER_NAME, user, numberpriormessages);
+    checkStrangerMessage(teacherMessage, TEACHER_NAME, student, numberpriormessages);
     numberpriormessages = getNumberMessages(student);
     WebElement chatInputStudent = student.getDriver().findElement(By.id("message"));
     chatInputStudent.sendKeys(studentMessage);
     student.getWaiter().until(ExpectedConditions.elementToBeClickable(By.id("send-btn")));
     student.getDriver().findElement(By.id("send-btn")).click();
-    checkStrangerMessage(studentMessage, STUDENT_NAME, user, numberpriormessages); //8lines
-    checkOwnMessage(studentMessage, STUDENT_NAME, student, numberpriormessages);//7lines
+    checkStrangerMessage(studentMessage, STUDENT_NAME, user, numberpriormessages);
+    checkOwnMessage(studentMessage, STUDENT_NAME, student, numberpriormessages);
 }
 
-private void checkOwnMessage(String message, String sender, BrowserUser user, int numberpriormessages) { //7Lines
+private void checkOwnMessage(String message, String sender, BrowserUser user, int numberpriormessages) {
     log.info("Checking own message (\"{}\") for {}", message, user.getClientData());
     user.getWaiter().until(ExpectedConditions.numberOfElementsToBeMoreThan(By.tagName("app-chat-line"), numberpriormessages));
     List<WebElement> messages = user.getDriver().findElements(By.tagName("app-chat-line"));
@@ -83,7 +83,7 @@ private void checkOwnMessage(String message, String sender, BrowserUser user, in
     user.getWaiter().until(ExpectedConditions.textToBePresentInElement(msgContent, message));
 }
 
-private void checkStrangerMessage(String message, String sender, BrowserUser user, int numberpriormessages) {//8 Lines
+private void checkStrangerMessage(String message, String sender, BrowserUser user, int numberpriormessages) {
     log.info("Checking another user's message (\"{}\") for {}", message, user.getClientData());
     user.getWaiter().until(ExpectedConditions.numberOfElementsToBeMoreThan(By.tagName("app-chat-line"), numberpriormessages));
     List<WebElement> messages = user.getDriver().findElements(By.tagName("app-chat-line"));
@@ -94,7 +94,7 @@ private void checkStrangerMessage(String message, String sender, BrowserUser use
     user.getWaiter().until(ExpectedConditions.textToBePresentInElement(msgContent, message));
 }
 
-private void checkSystemMessage(String message, BrowserUser user, int messagenumber) { //6 lines
+private void checkSystemMessage(String message, BrowserUser user, int messagenumber) {
     log.info("Checking system message (\"{}\") for {}", message, user.getClientData());
     user.getWaiter().until(ExpectedConditions.numberOfElementsToBeMoreThan(By.tagName("app-chat-line"), 0));
     List<WebElement> messages = user.getDriver().findElements(By.tagName("app-chat-line"));
@@ -112,4 +112,3 @@ private void checkSystemMessage(String message, BrowserUser user, int messagenum
 private int getNumberMessages(BrowserUser user) {
     return user.getDriver().findElements(By.tagName("app-chat-line")).size();
 }
-

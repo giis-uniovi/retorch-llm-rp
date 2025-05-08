@@ -33,7 +33,7 @@ private void editCourse() {
     waitForDialogClosed("course-modal", "Edition of course failed", user);
     user.waitUntil(ExpectedConditions.textToBe(By.cssSelector("#course-list .course-list-item:last-child div.course-title span"), editedCourseName), "Unexpected course name");
 }
-private void enterCourseAndNavigateTab(String courseName, String tabId) { //16 lines
+private void enterCourseAndNavigateTab(String courseName, String tabId) {
     log.info("Entering course {}", courseName);
     //All these tests always create a new course, so we wait for 3-courses in the main page (more than 2)
     user.waitUntil(ExpectedConditions.numberOfElementsToBeMoreThan(By.cssSelector("#course-list .course-list-item div.course-title span"), 2), "The number of courses should be 3");
