@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-BUwtoceODVgaw5PGBOLB6KTSR30Wy",
+  "object": "chat.completion",
+  "created": 1746715948,
+  "model": "o4-mini-2025-04-16",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "The one‐to‐one chat test exercises exactly the same set of logical back–end services and front–end components as our video test, except that we never touch actual media streaming (so no `openvidu` or `openvidumock`), nor do we spin up any code‐execution agents (`executor`). What we do hit is:\n\n1.  The login service  \n    – every test user has to authenticate, so we perform many read-only calls against `loginservice`.  \n2.  The session service  \n    – both teacher and student join the same chat session, which will mutate session state (user‐join, message exchange), so we need a read/write handle to `session`.  \n3.  The web server  \n    – all pages, dialogs, chat UI, etc. are being loaded from the single `webserver` instance (loads the Angular app, REST endpoints, WS fallback, etc.), so that’s read/write.  \n4.  The browser/container  \n    – each actor drives a browser instance (`webbrowser`) that pulls in pages and issues XHR/WS/chat – also read/write.\n\nAll of these map directly to Resources in our JSON catalog.  Following our previous examples, we end up with:\n\n```java\n@AccessMode(resID = \"loginservice\", concurrency = 10, sharing = true,  accessMode = \"READONLY\")\n@AccessMode(resID = \"session\",      concurrency = 1, sharing = true,  accessMode = \"READWRITE\")\n@AccessMode(resID = \"webserver\",    concurrency = 1,             accessMode = \"READWRITE\")\n@AccessMode(resID = \"webbrowser\",   concurrency = 1,             accessMode = \"READWRITE\")\n@DisplayName(\"oneToOneChatInSessionChrome\")\n@ParameterizedTest\n@MethodSource(\"data\")\n@Tag(\"Multiuser Test\")\nvoid oneToOneChatInSessionChrome( String mail,\n                                  String password,\n                                  String role )\n  throws URISyntaxException,\n         MalformedURLException,\n         NotLoggedException,\n         ElementNotFoundException,\n         InterruptedException\n{\n    // … test body as above …\n}\n```",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 7666,
+    "completion_tokens": 2129,
+    "total_tokens": 9795,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 1664,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

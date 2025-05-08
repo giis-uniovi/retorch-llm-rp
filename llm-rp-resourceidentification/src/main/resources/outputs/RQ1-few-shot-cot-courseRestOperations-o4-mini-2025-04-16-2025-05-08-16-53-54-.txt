@@ -1,0 +1,35 @@
+{
+  "id": "chatcmpl-BUwv0YdIYv2OlslNqTT34HYTZng1s",
+  "object": "chat.completion",
+  "created": 1746716022,
+  "model": "o4-mini-2025-04-16",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Below is the rationale for each resource your `courseRestOperations` test touches, followed by the corresponding `@AccessMode` annotations.\n\nExplanation of Resource Usage:\n\n1. loginservice  \n   – Your test begins with `slowLogin(…)`, which drives the authentication endpoint.  \n   – This is a read‐only interaction with the login service, shared by all parallel test threads.  \n\n2. course  \n   – You call `CourseNavigationUtilities.newCourse(…)`, then `editCourse()`, and finally `CourseNavigationUtilities.deleteCourse(…)`.  \n   – These are create, update and delete operations on the course entity, so a READWRITE access.  \n   – Concurrency is limited to one thread at a time for a given course name to avoid interleaving edits/deletes.  \n\n3. webserver  \n4. webbrowser  \n5. executor  \n   – All UI operations (opening dialogs, clicking icons, filling forms) use the Selenium‐driven browser, backed by your web server and coordinated by the test‐side executor.  \n   – These are read/write interactions (sending clicks, typing text, receiving responses).  \n   – They can be run in parallel across different browser instances, but each test thread gets its own browser, so concurrency per test is 1.  \n\n@AccessMode(resID = \"loginservice\", concurrency = 10, sharing = true, accessMode = \"READONLY\")  \n@AccessMode(resID = \"course\",       concurrency = 1,  accessMode = \"READWRITE\")  \n@AccessMode(resID = \"webserver\",    concurrency = 1,  accessMode = \"READWRITE\")  \n@AccessMode(resID = \"webbrowser\",   concurrency = 1,  accessMode = \"READWRITE\")  \n@AccessMode(resID = \"executor\",     concurrency = 1,  accessMode = \"READWRITE\")",
+        "refusal": null,
+        "annotations": []
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 7116,
+    "completion_tokens": 1238,
+    "total_tokens": 8354,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 832,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": null
+}

@@ -5,9 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 public class RQ1Experimentation {
@@ -41,12 +38,6 @@ public class RQ1Experimentation {
                 "loginTest"
         );
 
-        //= promptTestScenariosFewShot(exHelper.getUserRequirements(), exHelper.getTestScenarioExample());
-        //exHelper.putOutputToFile(getOutBasePath(), "few-shot-prompt", prompt);
-        //exHelper.sendChatGPTRequest(prompt, "gpt-4o-2024-05-13", "RQ1-few-shot-generaTestScenarios");
-        //exHelper.sendChatGPTRequest(prompt, "gpt-4o-mini-2024-07-18", "RQ1-few-shot-generateTestScenarios");
-
-        //log.debug("The prompt for FewShot is: {}", prompt);
 
         String jsonResource = exHelper.loadFileIntoString("llm-rp-resourceidentification/src/main/resources/RETORCHFullTeachingResources.json");
 
@@ -57,11 +48,10 @@ public class RQ1Experimentation {
             String prompt = promptIdentifyResourcesFewShotCoT(jsonResource, testExamples, testCase);
             log.debug("The prompt for Few Shot with CoT is: {}", prompt);
             exHelper.putOutputToFile(getOutBasePath(), "few-shot-CoT-prompt"+testName, prompt);
+            exHelper.sendChatGPTRequest(prompt, "o4-mini-2025-04-16", "RQ1-few-shot-cot-"+testName);
+            log.debug("Request to GPT correctly donde");
         }
 
-
-        //exHelper.sendChatGPTRequest(prompt, "gpt-4o-mini-2024-07-18", "RQ1-few-shot-cot-generateTestScenarios");
-        //exHelper.sendChatGPTRequest(prompt, "gpt-4o-2024-05-13", "RQ1-few-shot-cot-generateTestScenarios");
     }
 
 

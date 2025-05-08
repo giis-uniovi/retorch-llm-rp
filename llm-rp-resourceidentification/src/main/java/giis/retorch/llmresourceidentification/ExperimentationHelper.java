@@ -1,6 +1,5 @@
 package giis.retorch.llmresourceidentification;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -56,6 +55,7 @@ public class ExperimentationHelper {
         String filePath = "llm-rp-resourceidentification/src/main/resources/input/no-annotated/"+testMethodName+".txt";
         return  loadFileIntoString(filePath);
     }
+
     public void sendChatGPTRequest(String body, String model, String experimentname) throws IOException {
 
         String apiKey = System.getProperty(PATH_KEY) != null ? System.getProperty(PATH_KEY) : System.getenv(PATH_KEY);
@@ -73,7 +73,7 @@ public class ExperimentationHelper {
             conn.setRequestProperty("Authorization", "Bearer " + apiKey);
             conn.setDoOutput(true);
 
-            // Create JSON request body
+            // Create a JSON request body
             JSONObject data = new JSONObject();
             data.put("model", model);
 
@@ -88,19 +88,28 @@ public class ExperimentationHelper {
             userMessage.put("role", "user");
             userMessage.put("content", new JSONArray().put(messageContent));
 
-            // Add the user message to the messages array
+            // Add the user message to the message array
             JSONArray messages = new JSONArray();
             messages.put(userMessage);
 
-            // Create JSON request body
-            data.put("messages", messages);
-            data.put("temperature", 0.2); // More info at: https://community.openai.com/t/cheat-sheet-mastering-temperature-and-top-p-in-chatgpt-api/172683
-            data.put("max_tokens", 4000); // Upper limit for the anwer.
-            data.put("top_p", 1);
-            data.put("frequency_penalty", 0);
-            data.put("presence_penalty", 0);
-
-            // Write JSON data to output stream
+            if (model.equals("o4-mini-2025-04-16")) {
+                // Create a JSON request body
+                data.put("messages", messages);
+                data.put("temperature", 1); // More info at: https://community.openai.com/t/cheat-sheet-mastering-temperature-and-top-p-in-chatgpt-api/172683
+                data.put("max_completion_tokens", 4000); // Upper limit for the anwer.
+                data.put("top_p", 1);
+                data.put("frequency_penalty", 0);
+                data.put("presence_penalty", 0);
+            }
+            else{
+                data.put("messages", messages);
+                data.put("temperature", 0.2); // More info at: https://community.openai.com/t/cheat-sheet-mastering-temperature-and-top-p-in-chatgpt-api/172683
+                data.put("max_tokens", 4000); // Upper limit for the anwer.
+                data.put("top_p", 1);
+                data.put("frequency_penalty", 0);
+                data.put("presence_penalty", 0);
+            }
+            // Write JSON data to the output stream
             try (OutputStream os = conn.getOutputStream()) {
                 byte[] input = data.toString().getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
@@ -184,33 +193,6 @@ public class ExperimentationHelper {
         }
 
         return builder.toString();
-    }
-
-    public String getTestCasesCrossValidation(int pos) throws IOException {
-        String[] rawTestCases = openFileLoadContent(RESOURCESROUTE +"/input/inputSystemTestCases.txt").split("//TC");
-        List<String> contentList = new ArrayList<>(Arrays.asList(rawTestCases));
-        contentList.remove(pos);
-
-        return String.join("", contentList);
-    }
-
-    public String openFileLoadContent(String route) throws IOException {
-        String content;
-        content = FileUtils.readFileToString(new File(route), StandardCharsets.UTF_8).replace("\r\n", "\n");
-
-        return content;
-    }
-
-    public String getTestScenarios() throws IOException {
-        return openFileLoadContent(RESOURCESROUTE + "/input/inputTestScenarios.txt");
-    }
-
-    public String getUserRequirements() throws IOException {
-        return openFileLoadContent(RESOURCESROUTE + "/input/inputUserRequirements_en.txt");
-    }
-
-    public String getTestScenarioExample() throws IOException {
-        return openFileLoadContent(RESOURCESROUTE + "/input/inputTestScenarioExample.txt");
     }
 
 }
